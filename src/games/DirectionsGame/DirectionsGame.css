@@ -135,16 +135,24 @@
   }
 }
 
-.alphabet-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); 
+.directions-container {
+  display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
   max-width: 520px;
   justify-self: center;
 }
 
-.letter-box {
+.directions-row {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+
+}
+
+.direction-box {
+  align-self: center;
   display: flex;
   background-color: black;
   border: 2px solid #000;
@@ -155,12 +163,12 @@
 }
 
 
-.letter-box:hover {
+.direction-box:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.356);
 }
 
 @media (max-width: 500px) {
-  .letter-box {
+  .direction-box {
     margin: 1px;
     width: 86px;
   }
@@ -168,13 +176,13 @@
 
 
 @media (max-width: 400px) {
-  .letter-box {
+  .direction-box {
     margin: 1px;
     width: 56px;
   }
 }
 
-.letter-square {
+.direction-square {
   width: 50px;
   height: 50px;
   display: flex;
@@ -190,7 +198,7 @@
 }
 
 @media (max-width: 500px) {
-  .letter-square {
+  .direction-square {
     width: 40px;
     height: 40px;
     font-size: 22px;
@@ -198,7 +206,7 @@
 }
 
 @media (max-width: 400px) {
-  .letter-square {
+  .direction-square {
     width: 25px;
     height: 25px;
     font-size: 18px;

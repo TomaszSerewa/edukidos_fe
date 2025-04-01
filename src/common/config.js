@@ -1,5 +1,5 @@
 const config = {
-  backendUrl: 'http://localhost:3000/api'
+  backendUrl: 'https://edukidos.pl/ekdev/api', // Zmień na odpowiedni adres backendu
 };
 
 export default config;

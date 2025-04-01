@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import './LetterGame.css'; // Importuj plik CSS
+import './DigitsGame.css'; // Importuj plik CSS
 
-const allLetters = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ'.split('');
+const allDigits = '0123456789'.split('');
 
-const GuestLetterGame = () => {
-  const [currentLetter, setCurrentLetter] = useState('');
+const GuestDigitGame = () => {
+  const [currentDigit, setCurrentDigit] = useState('');
   const [options, setOptions] = useState([]);
-  const [lettersStats, setLettersStats] = useState({});
+  const [digitsStats, setDigitsStats] = useState({});
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [voices, setVoices] = useState([]);
   const [guessed, setGuessed] = useState(false);
   const [buttonColors, setButtonColors] = useState([]);
-  const [letters, setLetters] = useState([]);
+  const [digits, setDigits] = useState([]);
   let polishFemaleVoice = voices.find(voice => voice.lang === 'pl-PL' && voice.name.includes('Paulina'));
 
   useEffect(() => {
@@ -36,24 +36,24 @@ const GuestLetterGame = () => {
 
     const initializeGame = async () => {
       try {
-        const storedStats = sessionStorage.getItem('lettersStats');
+        const storedStats = sessionStorage.getItem('digitsStats');
         let initialStats;
         if (storedStats) {
           initialStats = JSON.parse(storedStats);
-          setLettersStats(initialStats);
+          setDigitsStats(initialStats);
         } else {
-          initialStats = allLetters.reduce((acc, letter) => {
-            acc[letter] = { letterStats: 0 };
+          initialStats = allDigits.reduce((acc, digit) => {
+            acc[digit] = { digitStats: 0 };
             return acc;
           }, {});
-          setLettersStats(initialStats);
-          sessionStorage.setItem('lettersStats', JSON.stringify(initialStats));
+          setDigitsStats(initialStats);
+          sessionStorage.setItem('digitsStats', JSON.stringify(initialStats));
         }
 
-        const filteredLetters = allLetters.filter(letter => initialStats[letter]?.letterStats < 10);
-        setLetters(filteredLetters);
+        const filteredDigits = allDigits.filter(digit => initialStats[digit]?.digitStats < 10);
+        setDigits(filteredDigits);
 
-        await generateNewQuestion(filteredLetters);
+        await generateNewQuestion(filteredDigits);
       } catch (error) {
         console.error('Error initializing game:', error);
         setError('Failed to initialize game. Please try again later.');
@@ -88,32 +88,32 @@ const GuestLetterGame = () => {
     return color;
   };
 
-  const generateNewQuestion = async (filteredLetters) => {
+  const generateNewQuestion = async (filteredDigits) => {
     setGuessed(false);
     try {
-      const storedLetter = sessionStorage.getItem('currentLetter');
+      const storedDigit = sessionStorage.getItem('currentDigit');
       let data;
-      if (storedLetter) {
-        data = { letterToGuess: storedLetter };
+      if (storedDigit) {
+        data = { digitToGuess: storedDigit };
       } else {
-        const letterToGuess = filteredLetters[Math.floor(Math.random() * filteredLetters.length)];
-        data = { letterToGuess };
-        sessionStorage.setItem('currentLetter', letterToGuess);
+        const digitToGuess = filteredDigits[Math.floor(Math.random() * filteredDigits.length)];
+        data = { digitToGuess };
+        sessionStorage.setItem('currentDigit', digitToGuess);
       }
-      console.log('Fetched next letter:', data);
-      setCurrentLetter(data.letterToGuess);
-      speak(`Wskaż literę ${data.letterToGuess}`);
+      console.log('Fetched next digit:', data);
+      setCurrentDigit(data.digitToGuess);
+      speak(`Wskaż cyfrę ${data.digitToGuess}`);
 
       const optionsSet = new Set();
       while (optionsSet.size < 3) {
-        const randomLetter = filteredLetters[Math.floor(Math.random() * filteredLetters.length)];
-        if (randomLetter !== data.letterToGuess) {
-          optionsSet.add(randomLetter);
+        const randomDigit = filteredDigits[Math.floor(Math.random() * filteredDigits.length)];
+        if (randomDigit !== data.digitToGuess) {
+          optionsSet.add(randomDigit);
         }
       }
       const optionsArray = Array.from(optionsSet);
       const randomIndex = Math.floor(Math.random() * 4);
-      optionsArray.splice(randomIndex, 0, data.letterToGuess); 
+      optionsArray.splice(randomIndex, 0, data.digitToGuess); 
       console.log('Generated options:', optionsArray); 
       setOptions(optionsArray);
 
@@ -126,51 +126,44 @@ const GuestLetterGame = () => {
     }
   };
 
-  function betterLetter(letter) {
-    if (letter === 'W') {
-      return 'WU';
-    } 
-    return letter;
-  }
-
-  const getRandomSuccessMessage = (letter) => {
+  const getRandomSuccessMessage = (digit) => {
     const messages = [
-      `Brawo, to litera ${betterLetter(letter)}`,
-      `Super, poznajesz literę ${betterLetter(letter)}`,
-      `Tak, to litera ${betterLetter(letter)}`
+      `Brawo, to cyfra ${digit}`,
+      `Super, poznajesz cyfrę ${digit}`,
+      `Tak, to cyfra ${digit}`
     ];
     return messages[Math.floor(Math.random() * messages.length)];
   };
 
   const handleOptionClick = async (option) => {
     try {
-      const updatedStats = { ...lettersStats };
+      const updatedStats = { ...digitsStats };
 
       if (!updatedStats[option]) {
-        updatedStats[option] = { letterStats: 0 };
+        updatedStats[option] = { digitStats: 0 };
       }
-      if (!updatedStats[currentLetter]) {
-        updatedStats[currentLetter] = { letterStats: 0 };
+      if (!updatedStats[currentDigit]) {
+        updatedStats[currentDigit] = { digitStats: 0 };
       }
 
-      if (option === currentLetter) {
+      if (option === currentDigit) {
         setMessage('Correct!');
-        updatedStats[option].letterStats += 1;
+        updatedStats[option].digitStats += 1;
         setGuessed(true);
         speak(getRandomSuccessMessage(option));
       } else {
         setMessage('Try again!');
-        updatedStats[option].letterStats = 0;
-        updatedStats[currentLetter].letterStats = 0;
-        speak(`To jest litera ${option}., Spróbuj jeszcze raz.`);
+        updatedStats[option].digitStats = 0;
+        updatedStats[currentDigit].digitStats = 0;
+        speak(`To jest cyfra ${option}. Spróbuj jeszcze raz.`);
       }
 
-      setLettersStats(updatedStats);
-      sessionStorage.setItem('lettersStats', JSON.stringify(updatedStats));
-      sessionStorage.removeItem('currentLetter'); 
+      setDigitsStats(updatedStats);
+      sessionStorage.setItem('digitsStats', JSON.stringify(updatedStats));
+      sessionStorage.removeItem('currentDigit'); 
     } catch (error) {
-      console.error('Error updating letter stats:', error);
-      setError('Failed to update letter stats. Please try again later.');
+      console.error('Error updating digit stats:', error);
+      setError('Failed to update digit stats. Please try again later.');
     }
   };
 
@@ -196,36 +189,34 @@ const GuestLetterGame = () => {
     return stars;
   };
 
-
-
-  const handleLetterClick = (letter) => {
-    speak(`To jest litera ${betterLetter(letter)}`);
+  const handleDigitClick = (digit) => {
+    speak(`To jest cyfra ${digit}`);
   };
 
   const handleHelpGameClick = () => {
-    speak("Gra polega na wskazaniu litery o którą prosi lektor. Za prawidłowe wskazanie literki otrzymujesz gwiazdki. Zbierz 5 gwiazdek przy każdej literze a zostaniesz mistrzem alfabetu.");
+    speak("Gra polega na wskazaniu cyfry o którą prosi lektor. Za prawidłowe wskazanie cyfry otrzymujesz gwiazdki. Zbierz 5 gwiazdek przy każdej cyfrze a zostaniesz mistrzem cyfr.");
   };
 
-  const handleHelpLettersClick = () => {
-    speak("Jeżeli nie poznajesz jakiejś litery kliknij na nią aby ją usłyszeć.");
+  const handleHelpDigitsClick = () => {
+    speak("Jeżeli nie poznajesz jakiejś cyfry kliknij na nią aby ją usłyszeć.");
   };
 
   return (
     <div class="game-c">
         <div className="header-container">
-        <h1>LITERKI</h1>
+        <h1>CYFRY</h1>
         <button className="help-button" onClick={handleHelpGameClick}>
           Pomoc <span role="img" aria-label="help">❓🔊</span>
         </button>
       </div>
       {error && <p className="error-message">{error}</p>}
-      <div className="question-box" onClick={() => speak(`Wskaż literę ${betterLetter(currentLetter)}`)}>
-        {guessed ? currentLetter : '?'}
+      <div className="question-box" onClick={() => speak(`Wskaż cyfrę ${currentDigit}`)}>
+        {guessed ? currentDigit : '?'}
         <span className="speaker-icon" role="img" aria-label="speaker">🔊</span>
       </div>
       {guessed &&       
         <div>
-        <button className="new-game-button" onClick={() => generateNewQuestion(letters)}>Nowa Gra</button>
+        <button className="new-game-button" onClick={() => generateNewQuestion(digits)}>Nowa Gra</button>
         </div>
       }
       <div className="options-container">
@@ -244,16 +235,16 @@ const GuestLetterGame = () => {
       </div>
       <div>
         <div className="header-container">
-            <h1>ALFABET</h1>
-            <button className="help-button" onClick={handleHelpLettersClick}>
+            <h1>CYFRY</h1>
+            <button className="help-button" onClick={handleHelpDigitsClick}>
                 Pomoc <span role="img" aria-label="help">❓🔊</span>
               </button>
         </div>
         <div className="alphabet-container">
-          {allLetters.map(letter => (
-            <div key={letter} className="letter-box">
-              <button className="letter-square" onClick={() => handleLetterClick(letter)}>{letter}</button>
-              <div className="stars-square">{renderStars(lettersStats[letter]?.letterStats || 0)}</div>
+          {allDigits.map(digit => (
+            <div key={digit} className="letter-box">
+              <button className="letter-square" onClick={() => handleDigitClick(digit)}>{digit}</button>
+              <div className="stars-square">{renderStars(digitsStats[digit]?.digitStats || 0)}</div>
             </div>
           ))}
         </div>
@@ -262,4 +253,4 @@ const GuestLetterGame = () => {
   );
 };
 
-export default GuestLetterGame;
+export default GuestDigitGame;

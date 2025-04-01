@@ -1,0 +1,553 @@
+[
+    {
+      "nazwa": "aligator",
+      "sylaby": ["a", "li", "ga", "tor"],
+      "liczba_sylab": 4
+    },
+    {
+      "nazwa": "antylopa",
+      "sylaby": ["an", "ty", "lo", "pa"],
+      "liczba_sylab": 4
+    },
+    {
+      "nazwa": "zebra",
+      "sylaby": ["ze", "bra"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "słoń",
+      "sylaby": ["słoń"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "żółw",
+      "sylaby": ["żółw"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "krokodyl",
+      "sylaby": ["kro", "ko", "dyl"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "lama",
+      "sylaby": ["la", "ma"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "nosorożec",
+      "sylaby": ["no", "so", "ro", "żec"],
+      "liczba_sylab": 4
+    },
+    {
+      "nazwa": "żyrafa",
+      "sylaby": ["ży", "ra", "fa"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "kangur",
+      "sylaby": ["kan", "gur"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "pies",
+      "sylaby": ["pies"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "kot",
+      "sylaby": ["kot"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "papuga",
+      "sylaby": ["pa", "pu", "ga"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "surykatka",
+      "sylaby": ["su", "ry", "kat", "ka"],
+      "liczba_sylab": 4
+    },
+    {
+      "nazwa": "małpa",
+      "sylaby": ["mał", "pa"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "panda",
+      "sylaby": ["pan", "da"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "lew",
+      "sylaby": ["lew"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "tygrys",
+      "sylaby": ["ty", "grys"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "wąż",
+      "sylaby": ["wąż"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "żaba",
+      "sylaby": ["ża", "ba"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "jaszczurka",
+      "sylaby": ["jasz", "czur", "ka"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "jeż",
+      "sylaby": ["jeż"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "wiewiórka",
+      "sylaby": ["wie", "wiór", "ka"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "mrównik",
+      "sylaby": ["mrów", "nik"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "koala",
+      "sylaby": ["ko", "a", "la"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "nietoperz",
+      "sylaby": ["nie", "to", "perz"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "płaszczka",
+      "sylaby": ["płaszcz", "ka"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "orzeł",
+      "sylaby": ["o", "rzeł"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "pingwin",
+      "sylaby": ["ping", "win"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "delfin",
+      "sylaby": ["del", "fin"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "kaczka",
+      "sylaby": ["kacz", "ka"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "bażant",
+      "sylaby": ["ba", "żant"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "ćma",
+      "sylaby": ["ćma"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "motyl",
+      "sylaby": ["mo", "tyl"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "sarna",
+      "sylaby": ["sar", "na"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "jeleń",
+      "sylaby": ["je", "leń"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "renifer",
+      "sylaby": ["re", "ni", "fer"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "borsuk",
+      "sylaby": ["bor", "suk"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "lis",
+      "sylaby": ["lis"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "szop",
+      "sylaby": ["szop"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "dzik",
+      "sylaby": ["dzik"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "kuna",
+      "sylaby": ["ku", "na"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "hipopotam",
+      "sylaby": ["hi", "po", "po", "tam"],
+      "liczba_sylab": 4
+    },
+    {
+      "nazwa": "homar",
+      "sylaby": ["ho", "mar"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "meduza",
+      "sylaby": ["me", "du", "za"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "krab",
+      "sylaby": ["krab"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "ośmiornica",
+      "sylaby": ["o", "śmior", "ni", "ca"],
+      "liczba_sylab": 4
+    },
+    {
+      "nazwa": "pająk",
+      "sylaby": ["pa", "jąk"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "biedronka",
+      "sylaby": ["bie", "dron", "ka"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "konik polny",
+      "sylaby": ["ko", "nik", "pol", "ny"],
+      "liczba_sylab": 4
+    },
+    {
+      "nazwa": "pszczoła",
+      "sylaby": ["psz", "czo", "ła"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "karaluch",
+      "sylaby": ["ka", "ra", "luch"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "żuk",
+      "sylaby": ["żuk"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "trzmiel",
+      "sylaby": ["trz", "miel"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "pstrąg",
+      "sylaby": ["pstrąg"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "łosoś",
+      "sylaby": ["ło", "soś"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "karp",
+      "sylaby": ["karp"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "ślimak",
+      "sylaby": ["śli", "mak"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "małż",
+      "sylaby": ["małż"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "wróbel",
+      "sylaby": ["wró", "bel"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "sowa",
+      "sylaby": ["so", "wa"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "gołąb",
+      "sylaby": ["go", "łąb"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "kukułka",
+      "sylaby": ["ku", "kuł", "ka"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "jaskółka",
+      "sylaby": ["ja", "skół", "ka"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "sęp",
+      "sylaby": ["sęp"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "indyk",
+      "sylaby": ["in", "dyk"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "struś",
+      "sylaby": ["struś"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "żmija",
+      "sylaby": ["żmi", "ja"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "scynk",
+      "sylaby": ["scynk"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "gekko",
+      "sylaby": ["gek", "ko"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "albatros",
+      "sylaby": ["al", "ba", "tros"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "mors",
+      "sylaby": ["mors"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "wieloryb",
+      "sylaby": ["wie", "lo", "ryb"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "foka",
+      "sylaby": ["fo", "ka"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "wydra",
+      "sylaby": ["wy", "dra"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "rekin",
+      "sylaby": ["re", "kin"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "sówka",
+      "sylaby": ["sów", "ka"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "mysz",
+      "sylaby": ["mysz"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "szczur",
+      "sylaby": ["szczur"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "łos",
+      "sylaby": ["łos"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "dzika kaczka",
+      "sylaby": ["dzi", "ka", "kacz", "ka"],
+      "liczba_sylab": 4
+    },
+    {
+      "nazwa": "niedźwiedź",
+      "sylaby": ["niedź", "wiedź"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "suseł",
+      "sylaby": ["su", "seł"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "żbik",
+      "sylaby": ["żbik"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "szynszyla",
+      "sylaby": ["szyn", "szy", "la"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "puma",
+      "sylaby": ["pu", "ma"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "koń",
+      "sylaby": ["koń"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "krowa",
+      "sylaby": ["kro", "wa"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "owca",
+      "sylaby": ["ow", "ca"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "koza",
+      "sylaby": ["ko", "za"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "świnia",
+      "sylaby": ["świ", "nia"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "kura",
+      "sylaby": ["ku", "ra"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "gęś",
+      "sylaby": ["gęś"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "kurczak",
+      "sylaby": ["kur", "czak"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "bóbr",
+      "sylaby": ["bóbr"],
+      "liczba_sylab": 1
+    },
+    {
+      "nazwa": "koźlę",
+      "sylaby": ["koź", "lę"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "kapibara",
+      "sylaby": ["ka", "pi", "ba", "ra"],
+      "liczba_sylab": 4
+    },
+    {
+      "nazwa": "tamandua",
+      "sylaby": ["ta", "man", "du", "a"],
+      "liczba_sylab": 4
+    },
+    {
+      "nazwa": "tapir",
+      "sylaby": ["ta", "pir"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "alpaka",
+      "sylaby": ["al", "pa", "ka"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "goryl",
+      "sylaby": ["go", "ryl"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "szympans",
+      "sylaby": ["szym", "pans"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "makak",
+      "sylaby": ["ma", "kak"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "orangutan",
+      "sylaby": ["o", "ran", "gu", "tan"],
+      "liczba_sylab": 4
+    },
+    {
+      "nazwa": "leniwiec",
+      "sylaby": ["le", "ni", "wiec"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "mrówkojad",
+      "sylaby": ["mrów", "ko", "jad"],
+      "liczba_sylab": 3
+    },
+    {
+      "nazwa": "dingo",
+      "sylaby": ["din", "go"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "diabeł tasmański",
+      "sylaby": ["dia", "beł", "tas", "mań", "ski"],
+      "liczba_sylab": 5
+    },
+    {
+      "nazwa": "emu",
+      "sylaby": ["e", "mu"],
+      "liczba_sylab": 2
+    },
+    {
+      "nazwa": "pawian",
+      "sylaby": ["pa", "wian"],
+      "liczba_sylab": 2
+    }
+  ]
+  

@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { login, register } from '../common/api';
+import { useNavigate, Link } from 'react-router-dom';
+
+import { login } from '../common/api';
 import './Header.css'; 
+import RegisterModal from '../popup/RegisterModal';
+import LoginModal from '../popup/LoginModal';
 
 const Header = ({ setUserId }) => {
   const [loginValue, setLoginValue] = useState('');
   const [password, setPassword] = useState('');
-  const [registerLogin, setRegisterLogin] = useState('');
-  const [registerPassword, setRegisterPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [userName, setUserName] = useState(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,45 +22,33 @@ const Header = ({ setUserId }) => {
     if (storedUser) {
       setLoggedInUser(storedUser);
     }
+    const name = localStorage.getItem('userName');
+    if (name) {
+      setUserName(name);
+    }
   }, []);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async (email, password) => {
     setErrorMessage('');
     try {
-      const data = await login(loginValue, password);
-      if (data.error) {
-        setErrorMessage(data.error);
+      const response = await login(email, password);
+      if (response.error) {
+        setErrorMessage(response.error);
+        return false;
       } else {
-        setLoggedInUser(loginValue);
-        localStorage.setItem('loggedInUser', loginValue);
-        localStorage.setItem('userId', data.userId); 
-        setUserId(data.userId);
-        console.log('Login successful:', data);
+        setLoggedInUser(email);
+        localStorage.setItem('loggedInUser', email);
+        localStorage.setItem('userId', response.userId); 
+        localStorage.setItem('userName', response.user.name);
+        setUserId(response.userId);
+        setUserName(response.user.name);
+        console.log('Login successful:', response);
+        return true;
       }
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Login error:', error);
       setErrorMessage('Błędny login lub hasło');
-    }
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setErrorMessage('');
-    if (registerPassword === confirmPassword) {
-      try {
-        const data = await register(registerLogin, registerPassword);
-        if (data.error) {
-          setErrorMessage(data.error);
-        } else {
-          console.log('Registration successful:', data);
-        }
-      } catch (error) {
-        console.error('Registration failed:', error);
-        setErrorMessage('Rejestracja nie powiodła się');
-      }
-    } else {
-      setErrorMessage('Hasła nie są zgodne');
+      return false;
     }
   };
 
@@ -64,48 +56,12 @@ const Header = ({ setUserId }) => {
     setLoggedInUser(null);
     localStorage.removeItem('loggedInUser');
     localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
     sessionStorage.removeItem('userId'); 
     setUserId(null);
+    setUserName(null);
     navigate('/'); 
   };
-  const enableLogin = false;
-
-  function showLoginform(){
-    if (enableLogin){
-      return (
-        <div className="forms">
-        {(loggedInUser) ? (
-          <div className="welcome">
-            <span>Witaj, {loggedInUser}</span>
-            <button onClick={handleLogout}>Wyloguj</button>
-          </div>
-        ) : (
-          <>
-            <form className="login-form" onSubmit={handleLogin}>
-              <div className="form-row">
-                <input type="text" value={loginValue} onChange={(e) => setLoginValue(e.target.value)} placeholder="Login" maxLength="20" autoComplete="username" />
-                {errorMessage && <div className="error-message">{errorMessage}</div>}
-              </div>
-              <div className="form-row">
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Hasło" maxLength="20" autoComplete="new-password" />
-                <button type="submit">Zaloguj</button>
-              </div>
-            </form>
-            <div className="separator">
-              <div className="circle">LUB</div>
-            </div>
-            <form className="register-form" onSubmit={handleRegister}>
-                <input type="text" value={registerLogin} onChange={(e) => setRegisterLogin(e.target.value)} placeholder="Login" maxLength="20" autoComplete="username"/>
-                <input type="password" value={registerPassword} onChange={(e) => setRegisterPassword(e.target.value)} placeholder="Hasło" maxLength="20" autoComplete="new-password" />
-                <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Potwierdź hasło" maxLength="20" autoComplete="new-password" />
-                <button type="submit">Zarejestruj</button>
-            </form>
-          </>
-        )}
-      </div>
-      );
-    }
-  }
 
   const logoLetters = [
     { letter: 'e', color: 'black' },
@@ -182,9 +138,11 @@ const Header = ({ setUserId }) => {
   function showLogo() {
     return (
       <div className="logo">
+      <Link to="/" className="logo">
         {currentColors.map((item, index) => (
           <span key={index} style={{ color: item.color }}>{item.letter}</span>
         ))}
+      </Link>
       </div>
     );
   }
@@ -192,7 +150,27 @@ const Header = ({ setUserId }) => {
   return (
     <header>
       {showLogo()}
-      {showLoginform()}
+      {userName ? (
+        <div className="forms">
+          <p>Witaj, {userName}!</p>
+          <button onClick={handleLogout}>Wyloguj</button>
+        </div>
+      ) : (
+        <div className="forms">
+          <button onClick={() => setShowLoginModal(true)}>Zaloguj</button>
+          <div className="separator">
+            <div className="circle">LUB</div>
+          </div>
+          <button onClick={() => setShowRegisterModal(true)}>Zarejestruj</button>
+        </div>
+      )}
+      {showRegisterModal && <RegisterModal onClose={() => setShowRegisterModal(false)} />}
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onLogin={handleLogin}
+        />
+      )}
     </header>
   );
 };

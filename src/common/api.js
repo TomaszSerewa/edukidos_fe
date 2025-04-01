@@ -1,16 +1,20 @@
 import config from './config';
 
-export const register = async (login, password) => {
+export const register = async (name, email, password) => {
   try {
-    console.log('Register data:', { login, password }); // Logowanie danych
     const response = await fetch(`${config.backendUrl}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ login, password }),
+      body: JSON.stringify({ name, email, password }),
     });
     const data = await response.json();
+    if (response.ok) {
+      // Zapisz token w localStorage
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userName', data.user.name);
+    }
     return data;
   } catch (error) {
     console.error('Error registering:', error);
@@ -18,15 +22,14 @@ export const register = async (login, password) => {
   }
 };
 
-export const login = async (login, password) => {
+export const login = async (email, password) => {
   try {
-    console.log('Login data:', { login, password }); // Logowanie danych
     const response = await fetch(`${config.backendUrl}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ login, password }),
+      body: JSON.stringify({ email, password }),
     });
     const data = await response.json();
     return data;
@@ -38,7 +41,6 @@ export const login = async (login, password) => {
 
 export const getLettersStats = async (userId) => {
   try {
-    console.log('Get letters stats for user');
     const response = await fetch(`${config.backendUrl}/letters/${userId}`);
     const data = await response.json();
     return data;

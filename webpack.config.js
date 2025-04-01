@@ -1,6 +1,8 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  mode: 'development',
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -12,7 +14,10 @@ module.exports = {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env', '@babel/preset-react']
+          }
         }
       },
       {
@@ -24,20 +29,26 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx']
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './public/index.html'
+    })
+  ],
   devServer: {
     static: {
       directory: path.join(__dirname, 'dist'),
     },
     compress: true,
-    port: 9000,
+    port: 3000,
+    host: '127.0.0.1',
+    open: true,
     historyApiFallback: true,
-    proxy: [
-      {
-        context: ['/api'],
-        target: 'http://localhost:3000', // URL serwera backendowego
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         pathRewrite: { '^/api': '' },
       },
-    ],
+    },
   }
 };
