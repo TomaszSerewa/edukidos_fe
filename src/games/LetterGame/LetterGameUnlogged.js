@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './LetterGame.css'; // Importuj plik CSS
-import { getPlayerStats, updatePlayerStats } from '../../common/api'; // Import funkcji API
 
-const allLetters = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ'.split('');
+const letters = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ'.split('');
 
-const LetterGame = () => {
+const GuestLetterGame = () => {
   const [currentLetter, setCurrentLetter] = useState('');
   const [options, setOptions] = useState([]);
   const [lettersStats, setLettersStats] = useState({});
@@ -13,9 +12,6 @@ const LetterGame = () => {
   const [voices, setVoices] = useState([]);
   const [guessed, setGuessed] = useState(false);
   const [buttonColors, setButtonColors] = useState([]);
-  const [letters, setLetters] = useState([]);
-  const userId = localStorage.getItem('userId'); // Pobierz ID użytkownika z localStorage
-  const gameId = 1; // ID gry (możesz ustawić dynamicznie)
   let polishFemaleVoice = voices.find(voice => voice.lang === 'pl-PL' && voice.name.includes('Paulina'));
 
   useEffect(() => {
@@ -24,11 +20,13 @@ const LetterGame = () => {
         let voices = await speechSynthesis.getVoices();
         if (voices.length !== 0) {
           setVoices(voices);
+          polishFemaleVoice = voices.find(voice => voice.lang === 'pl-PL' && voice.name.includes('Paulina'));
           resolve();
         } else {
           speechSynthesis.onvoiceschanged = async () => {
             voices = await speechSynthesis.getVoices();
             setVoices(voices);
+            polishFemaleVoice = voices.find(voice => voice.lang === 'pl-PL' && voice.name.includes('Paulina'));
             resolve();
           };
         }
@@ -37,27 +35,23 @@ const LetterGame = () => {
 
     const initializeGame = async () => {
       try {
-        if (userId) {
-          // Pobierz statystyki dla zalogowanego użytkownika
-          const stats = await getPlayerStats(userId, gameId);
-          if (stats && stats.stats_details) {
-            setLettersStats(stats.stats_details); // Ustaw statystyki liter
-          } else {
-            console.log('No stats found for this game.');
-          }
+        const storedStats = sessionStorage.getItem('lettersStats');
+        if (storedStats) {
+          setLettersStats(JSON.parse(storedStats));
         } else {
-          // Dla niezalogowanego użytkownika użyj sessionStorage
-          const storedStats = sessionStorage.getItem('lettersStats');
-          if (storedStats) {
-            setLettersStats(JSON.parse(storedStats));
-          }
+          const initialStats = letters.reduce((acc, letter) => {
+            acc[letter] = { letterStats: 0 };
+            return acc;
+          }, {});
+          setLettersStats(initialStats);
+          sessionStorage.setItem('lettersStats', JSON.stringify(initialStats));
         }
+        await generateNewQuestion();
       } catch (error) {
         console.error('Error initializing game:', error);
-        setError('Failed to load game stats. Please try again later.');
+        setError('Failed to initialize game. Please try again later.');
       }
     };
-
 
     const initialize = async () => {
       await loadVoices();
@@ -87,7 +81,7 @@ const LetterGame = () => {
     return color;
   };
 
-  const generateNewQuestion = async (filteredLetters) => {
+  const generateNewQuestion = async () => {
     setGuessed(false);
     try {
       const storedLetter = sessionStorage.getItem('currentLetter');
@@ -95,7 +89,7 @@ const LetterGame = () => {
       if (storedLetter) {
         data = { letterToGuess: storedLetter };
       } else {
-        const letterToGuess = filteredLetters[Math.floor(Math.random() * filteredLetters.length)];
+        const letterToGuess = letters[Math.floor(Math.random() * letters.length)];
         data = { letterToGuess };
         sessionStorage.setItem('currentLetter', letterToGuess);
       }
@@ -105,7 +99,7 @@ const LetterGame = () => {
 
       const optionsSet = new Set();
       while (optionsSet.size < 3) {
-        const randomLetter = filteredLetters[Math.floor(Math.random() * filteredLetters.length)];
+        const randomLetter = letters[Math.floor(Math.random() * letters.length)];
         if (randomLetter !== data.letterToGuess) {
           optionsSet.add(randomLetter);
         }
@@ -125,18 +119,11 @@ const LetterGame = () => {
     }
   };
 
-  function betterLetter(letter) {
-    if (letter === 'W') {
-      return 'WU';
-    } 
-    return letter;
-  }
-
   const getRandomSuccessMessage = (letter) => {
     const messages = [
-      `Brawo, to litera ${betterLetter(letter)}`,
-      `Super, poznajesz literę ${betterLetter(letter)}`,
-      `Tak, to litera ${betterLetter(letter)}`
+      `Brawo, to litera ${letter}`,
+      `Super, poznajesz literę ${letter}`,
+      `Tak, to litera ${letter}`
     ];
     return messages[Math.floor(Math.random() * messages.length)];
   };
@@ -152,32 +139,21 @@ const LetterGame = () => {
         updatedStats[currentLetter] = { letterStats: 0 };
       }
 
-      let isCorrect = false;
-
       if (option === currentLetter) {
         setMessage('Correct!');
         updatedStats[option].letterStats += 1;
         setGuessed(true);
         speak(getRandomSuccessMessage(option));
-        isCorrect = true;
       } else {
         setMessage('Try again!');
         updatedStats[option].letterStats = 0;
         updatedStats[currentLetter].letterStats = 0;
-        speak(`To jest litera ${option}. Spróbuj jeszcze raz.`);
+        speak(`To jest litera ${option}., Spróbuj jeszcze raz.`);
       }
 
       setLettersStats(updatedStats);
       sessionStorage.setItem('lettersStats', JSON.stringify(updatedStats));
-      sessionStorage.removeItem('currentLetter');
-      sessionStorage.removeItem('userId');
-
-      // Wyślij statystyki na backend dla zalogowanego użytkownika
-      const playerId = sessionStorage.getItem('playerId'); // Pobierz ID gracza z sesji
-      const gameId = 1; // ID gry (możesz ustawić dynamicznie)
-      if (playerId) {
-        await updatePlayerStats(playerId, gameId, 1, { letter: currentLetter, isCorrect });
-      }
+      sessionStorage.removeItem('currentLetter'); 
     } catch (error) {
       console.error('Error updating letter stats:', error);
       setError('Failed to update letter stats. Please try again later.');
@@ -206,10 +182,17 @@ const LetterGame = () => {
     return stars;
   };
 
-
-
   const handleLetterClick = (letter) => {
-    speak(`To jest litera ${betterLetter(letter)}`);
+    if (letter === 'W'){
+      speak(`To jest litera wu`);
+      return;
+    }
+    if (letter === 'Ę'){
+      speak(`To jest litera ę`);
+
+      return;
+    }
+    speak(`To jest litera ${letter}`);
   };
 
   const handleHelpGameClick = () => {
@@ -219,7 +202,7 @@ const LetterGame = () => {
   const handleHelpLettersClick = () => {
     speak("Jeżeli nie poznajesz jakiejś litery kliknij na nią aby ją usłyszeć.");
   };
-
+  
   return (
     <div class="game-c">
         <div className="header-container">
@@ -229,13 +212,13 @@ const LetterGame = () => {
         </button>
       </div>
       {error && <p className="error-message">{error}</p>}
-      <div className="question-box" onClick={() => speak(`Wskaż literę ${betterLetter(currentLetter)}`)}>
+      <div className="question-box" onClick={() => speak(`Wskaż literę ${currentLetter}`)}>
         {guessed ? currentLetter : '?'}
         <span className="speaker-icon" role="img" aria-label="speaker">🔊</span>
       </div>
       {guessed &&       
         <div>
-        <button className="new-game-button" onClick={() => generateNewQuestion(letters)}>Nowa Gra</button>
+        <button className="new-game-button" onClick={generateNewQuestion}>Nowa Gra</button>
         </div>
       }
       <div className="options-container">
@@ -260,7 +243,7 @@ const LetterGame = () => {
               </button>
         </div>
         <div className="alphabet-container">
-          {allLetters.map(letter => (
+          {letters.map(letter => (
             <div key={letter} className="letter-box">
               <button className="letter-square" onClick={() => handleLetterClick(letter)}>{letter}</button>
               <div className="stars-square">{renderStars(lettersStats[letter]?.letterStats || 0)}</div>
@@ -272,4 +255,4 @@ const LetterGame = () => {
   );
 };
 
-export default LetterGame;
+export default GuestLetterGame;

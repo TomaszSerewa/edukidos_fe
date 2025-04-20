@@ -29,7 +29,7 @@ export const login = async (email, password) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ login: email, password }),
     });
     const data = await response.json();
     return data;
@@ -39,30 +39,30 @@ export const login = async (email, password) => {
   }
 };
 
-export const getLettersStats = async (userId) => {
+export const getPlayerStats = async (userId, gameId) => {
   try {
-    const response = await fetch(`${config.backendUrl}/letters/${userId}`);
+    const response = await fetch(`${config.backendUrl}/api/player-stats/${userId}/${gameId}`);
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching letters stats:', error);
+    console.error('Error fetching player stats:', error);
     throw error;
   }
 };
 
-export const updateLettersStats = async (userId, lettersStats) => {
+export const updatePlayerStats = async (userId, gameId, starsChange, statsDetails) => {
   try {
-    const response = await fetch(`${config.backendUrl}/letters/${userId}`, {
+    const response = await fetch(`${config.backendUrl}/api/player-stats/${userId}/${gameId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ lettersStats }),
+      body: JSON.stringify({ starsChange, statsDetails }),
     });
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error updating letters stats:', error);
+    console.error('Error updating player stats:', error);
     throw error;
   }
 };

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useUser } from '../UserContext'; // Pobieranie z kontekstu
+import { login } from '../common/api'; // Import funkcji login z common/api.js
 import './Modal.css';
 
-const LoginModal = ({ onClose, onLogin }) => {
+const LoginModal = ({ onClose }) => {
+  const { setUserId } = useUser(); // Pobieranie setUserId z kontekstu
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -10,16 +13,26 @@ const LoginModal = ({ onClose, onLogin }) => {
     e.preventDefault();
     setError(null);
     try {
-      const success = await onLogin(email, password);
-      if (!success) {
-        setError('Nieprawidłowy email lub hasło.');
+      const response = await login(email, password); // Wywołanie API login
+      if (response.error) {
+        setError(response.error);
       } else {
-        onClose(); // Zamknięcie popupu po zalogowaniu
-        window.location.reload(); // Odświeżenie strony
+        const userId = response.user.id;
+        const userName = response.user.login;
+        console.log('Login successful:', response);
+
+        // Ustawienie danych użytkownika
+        setUserId(userId); // Ustawienie userId w kontekście
+        localStorage.setItem('loggedInUser', email);
+        localStorage.setItem('userId', userId);
+        localStorage.setItem('userName', userName);
+        window.location.reload();
+
+        onClose(); // Zamknięcie modala
       }
     } catch (err) {
-      setError('Wystąpił błąd podczas logowania.');
-      console.error(err);
+      console.error('Login error:', err);
+      setError('Błędny login lub hasło');
     }
   };
 
@@ -40,7 +53,6 @@ const LoginModal = ({ onClose, onLogin }) => {
               placeholder="Wpisz swój email"
               required
             />
-            <i className="fas fa-envelope"></i>
           </div>
           <div className="form-group">
             <label>Hasło:</label>
@@ -51,7 +63,6 @@ const LoginModal = ({ onClose, onLogin }) => {
               placeholder="Wpisz swoje hasło"
               required
             />
-            <i className="fas fa-lock"></i>
           </div>
           {error && <p className="error-message">{error}</p>}
           <button type="submit" className="login-button">Zaloguj</button>

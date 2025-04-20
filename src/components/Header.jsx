@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-
-import { login } from '../common/api';
-import './Header.css'; 
+import './Header.css';
 import RegisterModal from '../popup/RegisterModal';
 import LoginModal from '../popup/LoginModal';
 
-const Header = ({ setUserId }) => {
-  const [loginValue, setLoginValue] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+const Header = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const [showLogin, setShowLogin] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [userName, setUserName] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -28,39 +22,14 @@ const Header = ({ setUserId }) => {
     }
   }, []);
 
-  const handleLogin = async (email, password) => {
-    setErrorMessage('');
-    try {
-      const response = await login(email, password);
-      if (response.error) {
-        setErrorMessage(response.error);
-        return false;
-      } else {
-        setLoggedInUser(email);
-        localStorage.setItem('loggedInUser', email);
-        localStorage.setItem('userId', response.userId); 
-        localStorage.setItem('userName', response.user.name);
-        setUserId(response.userId);
-        setUserName(response.user.name);
-        console.log('Login successful:', response);
-        return true;
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      setErrorMessage('Błędny login lub hasło');
-      return false;
-    }
-  };
-
   const handleLogout = () => {
     setLoggedInUser(null);
     localStorage.removeItem('loggedInUser');
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
-    sessionStorage.removeItem('userId'); 
-    setUserId(null);
+    sessionStorage.removeItem('userId');
     setUserName(null);
-    navigate('/'); 
+    navigate('/');
   };
 
   const logoLetters = [
@@ -138,11 +107,11 @@ const Header = ({ setUserId }) => {
   function showLogo() {
     return (
       <div className="logo">
-      <Link to="/" className="logo">
-        {currentColors.map((item, index) => (
-          <span key={index} style={{ color: item.color }}>{item.letter}</span>
-        ))}
-      </Link>
+        <Link to="/" className="logo">
+          {currentColors.map((item, index) => (
+            <span key={index} style={{ color: item.color }}>{item.letter}</span>
+          ))}
+        </Link>
       </div>
     );
   }
@@ -152,7 +121,13 @@ const Header = ({ setUserId }) => {
       {showLogo()}
       {userName ? (
         <div className="forms">
-          <p>Witaj, {userName}!</p>
+          <p>
+            Witaj,{' '}
+            <Link to="/stats" className="user-link">
+              {userName}
+            </Link>
+            !
+          </p>
           <button onClick={handleLogout}>Wyloguj</button>
         </div>
       ) : (
@@ -165,12 +140,7 @@ const Header = ({ setUserId }) => {
         </div>
       )}
       {showRegisterModal && <RegisterModal onClose={() => setShowRegisterModal(false)} />}
-      {showLoginModal && (
-        <LoginModal
-          onClose={() => setShowLoginModal(false)}
-          onLogin={handleLogin}
-        />
-      )}
+      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
     </header>
   );
 };

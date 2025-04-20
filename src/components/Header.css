@@ -82,3 +82,13 @@ header {
     font-size: 16px;
     font-weight: bold;
   }
+
+  .user-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .user-link:hover {
+    color: darkblue;
+  }

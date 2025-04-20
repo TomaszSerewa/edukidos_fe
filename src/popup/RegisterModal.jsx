@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Modal.css';
+import { register } from '../common/api'; // Ścieżka do pliku, w którym znajduje się funkcja `register`
 
 const RegisterModal = ({ onClose }) => {
   const [name, setName] = useState('');
