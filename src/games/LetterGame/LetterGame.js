@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './LetterGame.css'; // Importuj plik CSS
-import { getPlayerStats, updatePlayerStats } from '../../common/api'; // Import funkcji API
+import { getNextLetter, getPlayerStats, updatePlayerStats } from '../../common/api'; // Import funkcji API
 
 const allLetters = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ'.split('');
 
@@ -37,27 +37,23 @@ const LetterGame = () => {
 
     const initializeGame = async () => {
       try {
-        if (userId) {
-          // Pobierz statystyki dla zalogowanego użytkownika
-          const stats = await getPlayerStats(userId, gameId);
-          if (stats && stats.stats_details) {
-            setLettersStats(stats.stats_details); // Ustaw statystyki liter
-          } else {
-            console.log('No stats found for this game.');
-          }
-        } else {
-          // Dla niezalogowanego użytkownika użyj sessionStorage
-          const storedStats = sessionStorage.getItem('lettersStats');
-          if (storedStats) {
-            setLettersStats(JSON.parse(storedStats));
-          }
+        const token = localStorage.getItem('token'); // Pobierz token z localStorage
+        if (!token) {
+          throw new Error('Brak tokena uwierzytelniającego. Zaloguj się ponownie.');
         }
+
+        const data = await getNextLetter(userId, token); // Wywołanie funkcji API
+        console.log('Fetched next letter:', data);
+
+        // Ustawienie litery do odgadnięcia i opcji
+        setCurrentLetter(data.correctLetter);
+        setOptions([...data.uncorrectLetters, data.correctLetter].sort(() => Math.random() - 0.5)); // Losowe rozmieszczenie opcji
+        speak(`Wskaż literę ${data.correctLetter}`);
       } catch (error) {
         console.error('Error initializing game:', error);
-        setError('Failed to load game stats. Please try again later.');
+        setError('Nie udało się zainicjalizować gry. Spróbuj ponownie później.');
       }
     };
-
 
     const initialize = async () => {
       await loadVoices();

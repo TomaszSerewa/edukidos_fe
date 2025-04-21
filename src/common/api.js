@@ -24,13 +24,24 @@ export const register = async (name, email, password) => {
 
 export const login = async (email, password) => {
   try {
+    if (!email || !password) {
+      throw new Error('Login i hasło są wymagane.');
+    }
+
+    console.log('Login:', email);
+
     const response = await fetch(`${config.backendUrl}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ login: email, password }),
+      body: JSON.stringify({ login: email, password }), // Przekazanie loginu i hasła
     });
+
+    if (!response.ok) {
+      throw new Error('Nieprawidłowe dane logowania.');
+    }
+
     const data = await response.json();
     return data;
   } catch (error) {
@@ -69,7 +80,22 @@ export const updatePlayerStats = async (userId, gameId, starsChange, statsDetail
 
 export const getNextLetter = async (userId) => {
   try {
-    const response = await fetch(`${config.backendUrl}/letters/next/${userId}`);
+    const token = localStorage.getItem('token'); // Pobierz token z localStorage
+    if (!token) {
+      throw new Error('Brak tokena uwierzytelniającego. Zaloguj się ponownie.');
+    }
+
+    const response = await fetch(`${config.backendUrl}/api/games/letters/next/${userId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`, // Przekazanie tokena w nagłówku
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Nie udało się pobrać danych z serwera.');
+    }
+
     const data = await response.json();
     return data;
   } catch (error) {
