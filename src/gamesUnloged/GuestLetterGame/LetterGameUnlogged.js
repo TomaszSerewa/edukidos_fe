@@ -1,36 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import './ColorsGame.css'; // Importuj plik CSS
+import './GuestLetterGame.css'; // Importuj plik CSS
 
-const allColors = [
-  'czerwony', 'niebieski', 'zielony', 'żółty', 'pomarańczowy',
-  'fioletowy', 'różowy', 'brązowy', 'czarny', 'biały', 'błękitny', 'szary'
-];
+const letters = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ'.split('');
 
-const colorMap = {
-  'czerwony': '#FF0000',
-  'niebieski': '#0000FF',
-  'zielony': '#008000',
-  'żółty': '#FFFF00',
-  'pomarańczowy': '#FFA500',
-  'fioletowy': '#800080',
-  'różowy': '#FFC0CB',
-  'brązowy': '#A52A2A',
-  'czarny': '#000000',
-  'biały': '#FFFFFF',
-  'błękitny': '#00BFFF',
-  'szary': '#808080'
-};
-
-const GuestColorsGame = () => {
-  const [currentColor, setCurrentColor] = useState('');
+const GuestLetterGame = () => {
+  const [currentLetter, setCurrentLetter] = useState('');
   const [options, setOptions] = useState([]);
-  const [colorsStats, setColorsStats] = useState({});
+  const [lettersStats, setLettersStats] = useState({});
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [voices, setVoices] = useState([]);
   const [guessed, setGuessed] = useState(false);
   const [buttonColors, setButtonColors] = useState([]);
-  const [colors, setColors] = useState([]);
   let polishFemaleVoice = voices.find(voice => voice.lang === 'pl-PL' && voice.name.includes('Paulina'));
 
   useEffect(() => {
@@ -54,24 +35,18 @@ const GuestColorsGame = () => {
 
     const initializeGame = async () => {
       try {
-        const storedStats = sessionStorage.getItem('colorsStats');
-        let initialStats;
+        const storedStats = sessionStorage.getItem('lettersStats');
         if (storedStats) {
-          initialStats = JSON.parse(storedStats);
-          setColorsStats(initialStats);
+          setLettersStats(JSON.parse(storedStats));
         } else {
-          initialStats = allColors.reduce((acc, color) => {
-            acc[color] = { colorStats: 0 };
+          const initialStats = letters.reduce((acc, letter) => {
+            acc[letter] = { letterStats: 0 };
             return acc;
           }, {});
-          setColorsStats(initialStats);
-          sessionStorage.setItem('colorsStats', JSON.stringify(initialStats));
+          setLettersStats(initialStats);
+          sessionStorage.setItem('lettersStats', JSON.stringify(initialStats));
         }
-
-        const filteredColors = allColors.filter(color => initialStats[color]?.colorStats < 10);
-        setColors(filteredColors);
-
-        await generateNewQuestion(filteredColors);
+        await generateNewQuestion();
       } catch (error) {
         console.error('Error initializing game:', error);
         setError('Failed to initialize game. Please try again later.');
@@ -106,36 +81,36 @@ const GuestColorsGame = () => {
     return color;
   };
 
-  const generateNewQuestion = async (filteredColors) => {
+  const generateNewQuestion = async () => {
     setGuessed(false);
     try {
-      const storedColor = sessionStorage.getItem('currentColor');
+      const storedLetter = sessionStorage.getItem('currentLetter');
       let data;
-      if (storedColor) {
-        data = { colorToGuess: storedColor };
+      if (storedLetter) {
+        data = { letterToGuess: storedLetter };
       } else {
-        const colorToGuess = filteredColors[Math.floor(Math.random() * filteredColors.length)];
-        data = { colorToGuess };
-        sessionStorage.setItem('currentColor', colorToGuess);
+        const letterToGuess = letters[Math.floor(Math.random() * letters.length)];
+        data = { letterToGuess };
+        sessionStorage.setItem('currentLetter', letterToGuess);
       }
-      console.log('Fetched next color:', data);
-      setCurrentColor(data.colorToGuess);
-      speak(`Wskaż kolor ${data.colorToGuess}`);
+      console.log('Fetched next letter:', data);
+      setCurrentLetter(data.letterToGuess);
+      speak(`Wskaż literę ${data.letterToGuess}`);
 
       const optionsSet = new Set();
       while (optionsSet.size < 3) {
-        const randomColor = filteredColors[Math.floor(Math.random() * filteredColors.length)];
-        if (randomColor !== data.colorToGuess) {
-          optionsSet.add(randomColor);
+        const randomLetter = letters[Math.floor(Math.random() * letters.length)];
+        if (randomLetter !== data.letterToGuess) {
+          optionsSet.add(randomLetter);
         }
       }
       const optionsArray = Array.from(optionsSet);
       const randomIndex = Math.floor(Math.random() * 4);
-      optionsArray.splice(randomIndex, 0, data.colorToGuess); 
+      optionsArray.splice(randomIndex, 0, data.letterToGuess); 
       console.log('Generated options:', optionsArray); 
       setOptions(optionsArray);
 
-      const colors = optionsArray.map(color => colorMap[color]);
+      const colors = optionsArray.map(() => getRandomColor());
       setButtonColors(colors);
 
     } catch (error) {
@@ -144,44 +119,44 @@ const GuestColorsGame = () => {
     }
   };
 
-  const getRandomSuccessMessage = (color) => {
+  const getRandomSuccessMessage = (letter) => {
     const messages = [
-      `Brawo, to kolor ${color}`,
-      `Super, poznajesz kolor ${color}`,
-      `Tak, to kolor ${color}`
+      `Brawo, to litera ${letter}`,
+      `Super, poznajesz literę ${letter}`,
+      `Tak, to litera ${letter}`
     ];
     return messages[Math.floor(Math.random() * messages.length)];
   };
 
   const handleOptionClick = async (option) => {
     try {
-      const updatedStats = { ...colorsStats };
+      const updatedStats = { ...lettersStats };
 
       if (!updatedStats[option]) {
-        updatedStats[option] = { colorStats: 0 };
+        updatedStats[option] = { letterStats: 0 };
       }
-      if (!updatedStats[currentColor]) {
-        updatedStats[currentColor] = { colorStats: 0 };
+      if (!updatedStats[currentLetter]) {
+        updatedStats[currentLetter] = { letterStats: 0 };
       }
 
-      if (option === currentColor) {
+      if (option === currentLetter) {
         setMessage('Correct!');
-        updatedStats[option].colorStats += 1;
+        updatedStats[option].letterStats += 1;
         setGuessed(true);
         speak(getRandomSuccessMessage(option));
       } else {
         setMessage('Try again!');
-        updatedStats[option].colorStats = 0;
-        updatedStats[currentColor].colorStats = 0;
-        speak(`To jest kolor ${option}. Spróbuj jeszcze raz.`);
+        updatedStats[option].letterStats = 0;
+        updatedStats[currentLetter].letterStats = 0;
+        speak(`To jest litera ${option}., Spróbuj jeszcze raz.`);
       }
 
-      setColorsStats(updatedStats);
-      sessionStorage.setItem('colorsStats', JSON.stringify(updatedStats));
-      sessionStorage.removeItem('currentColor'); 
+      setLettersStats(updatedStats);
+      sessionStorage.setItem('lettersStats', JSON.stringify(updatedStats));
+      sessionStorage.removeItem('currentLetter'); 
     } catch (error) {
-      console.error('Error updating color stats:', error);
-      setError('Failed to update color stats. Please try again later.');
+      console.error('Error updating letter stats:', error);
+      setError('Failed to update letter stats. Please try again later.');
     }
   };
 
@@ -207,34 +182,43 @@ const GuestColorsGame = () => {
     return stars;
   };
 
-  const handleColorClick = (color) => {
-    speak(`To jest kolor ${color}`);
+  const handleLetterClick = (letter) => {
+    if (letter === 'W'){
+      speak(`To jest litera wu`);
+      return;
+    }
+    if (letter === 'Ę'){
+      speak(`To jest litera ę`);
+
+      return;
+    }
+    speak(`To jest litera ${letter}`);
   };
 
   const handleHelpGameClick = () => {
-    speak("Gra polega na wskazaniu koloru o który prosi lektor. Za prawidłowe wskazanie koloru otrzymujesz gwiazdki. Zbierz 5 gwiazdek przy każdym kolorze a zostaniesz mistrzem kolorów.");
+    speak("Gra polega na wskazaniu litery o którą prosi lektor. Za prawidłowe wskazanie literki otrzymujesz gwiazdki. Zbierz 5 gwiazdek przy każdej literze a zostaniesz mistrzem alfabetu.");
   };
 
-  const handleHelpColorsClick = () => {
-    speak("Jeżeli nie poznajesz jakiegoś koloru kliknij na niego aby go usłyszeć.");
+  const handleHelpLettersClick = () => {
+    speak("Jeżeli nie poznajesz jakiejś litery kliknij na nią aby ją usłyszeć.");
   };
-
+  
   return (
     <div class="game-c">
         <div className="header-container">
-        <h1>KOLORY</h1>
+        <h1>LITERKI</h1>
         <button className="help-button" onClick={handleHelpGameClick}>
           Pomoc <span role="img" aria-label="help">❓🔊</span>
         </button>
       </div>
       {error && <p className="error-message">{error}</p>}
-      <div className="question-box" onClick={() => speak(`Wskaż kolor ${currentColor}`)}>
-        ?
+      <div className="question-box" onClick={() => speak(`Wskaż literę ${currentLetter}`)}>
+        {guessed ? currentLetter : '?'}
         <span className="speaker-icon" role="img" aria-label="speaker">🔊</span>
       </div>
       {guessed &&       
         <div>
-        <button className="new-game-button" onClick={() => generateNewQuestion(colors)}>Nowa Gra</button>
+        <button className="new-game-button" onClick={generateNewQuestion}>Nowa Gra</button>
         </div>
       }
       <div className="options-container">
@@ -246,22 +230,23 @@ const GuestColorsGame = () => {
               className="letter-button"
               style={{ backgroundColor: buttonColors[index] }}
             >
+              {option}
             </button>
           ))
         )}
       </div>
       <div>
         <div className="header-container">
-            <h1>KOLORY</h1>
-            <button className="help-button" onClick={handleHelpColorsClick}>
+            <h1>ALFABET</h1>
+            <button className="help-button" onClick={handleHelpLettersClick}>
                 Pomoc <span role="img" aria-label="help">❓🔊</span>
               </button>
         </div>
         <div className="alphabet-container">
-          {allColors.map(color => (
-            <div key={color} className="letter-box" >
-              <button className="letter-square" style={{ backgroundColor: colorMap[color] }} onClick={() => handleColorClick(color)}></button>
-              <div className="stars-square">{renderStars(colorsStats[color]?.colorStats || 0)}</div>
+          {letters.map(letter => (
+            <div key={letter} className="letter-box">
+              <button className="letter-square" onClick={() => handleLetterClick(letter)}>{letter}</button>
+              <div className="stars-square">{renderStars(lettersStats[letter]?.letterStats || 0)}</div>
             </div>
           ))}
         </div>
@@ -270,4 +255,4 @@ const GuestColorsGame = () => {
   );
 };
 
-export default GuestColorsGame;
+export default GuestLetterGame;

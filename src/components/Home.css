@@ -1,0 +1,39 @@
+.home {
+  text-align: center;
+  padding: 20px;
+}
+
+.games-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.game-item {
+  text-align: center;
+  width: 250px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.game-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.game-thumbnail {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.game-title {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}

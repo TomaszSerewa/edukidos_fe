@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../UserContext'; // Import UserContext
-import './Home.css'; // Stylizacja strony Home
+import './Home.css'; // Możesz użyć tej samej stylizacji co dla Home
 
-const Home = () => {
+const HomeUnlogged = () => {
   const { user } = useUser(); // Pobierz dane użytkownika z UserContext
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      navigate('/home'); // Przekierowanie na HomeUnlogged, jeśli użytkownik nie jest zalogowany
+    if (user) {
+      navigate('/'); // Przekierowanie na Home, jeśli użytkownik jest zalogowany
     }
   }, [user, navigate]);
 
@@ -17,7 +17,7 @@ const Home = () => {
     <div className="home">
       <div className="games-gallery">
         <div className="game-item">
-          <Link to="/games/letters">
+          <Link to="/gamesUnlogged/letters-unlogged">
             <img
               src="/img/gamesMiniatures/pokaz_literke_250.png"
               alt="Pokaż literkę"
@@ -26,7 +26,7 @@ const Home = () => {
           </Link>
         </div>
         <div className="game-item">
-          <Link to="/gamesUnlogged/numbers">
+          <Link to="/gamesUnlogged/digits">
             <img
               src="/img/gamesMiniatures/pokaz_cyferke_250.png"
               alt="Pokaż cyferkę"
@@ -47,7 +47,7 @@ const Home = () => {
           <Link to="/gamesUnlogged/directions">
             <img
               src="/img/gamesMiniatures/pokaz_kierunek_250.png"
-              alt="Pokaż kolor"
+              alt="Pokaż kierunek"
               className="game-thumbnail"
             />
           </Link>
@@ -57,4 +57,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomeUnlogged;

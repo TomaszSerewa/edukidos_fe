@@ -1,13 +1,14 @@
 import config from './config';
+import axios from 'axios';
 
-export const register = async (name, email, password) => {
+export const register = async (name, email, password, avatar, data_urodzenia) => {
   try {
     const response = await fetch(`${config.backendUrl}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, avatar, data_urodzenia }),
     });
     const data = await response.json();
     if (response.ok) {
@@ -50,9 +51,23 @@ export const login = async (email, password) => {
   }
 };
 
-export const getPlayerStats = async (userId, gameId) => {
+export const getPlayerStats = async (gameId, token) => {
   try {
-    const response = await fetch(`${config.backendUrl}/api/player-stats/${userId}/${gameId}`);
+    if (!token) {
+      throw new Error('Brak tokena uwierzytelniającego. Zaloguj się ponownie.');
+    }
+
+    const response = await fetch(`${config.backendUrl}/api/player-stats/${gameId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`, // Przekazanie tokena w nagłówku
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Nie udało się pobrać statystyk gracza.');
+    }
+
     const data = await response.json();
     return data;
   } catch (error) {
@@ -61,15 +76,25 @@ export const getPlayerStats = async (userId, gameId) => {
   }
 };
 
-export const updatePlayerStats = async (userId, gameId, starsChange, statsDetails) => {
+export const updatePlayerStats = async (gameId, starsChange, statsDetails, token) => {
   try {
-    const response = await fetch(`${config.backendUrl}/api/player-stats/${userId}/${gameId}`, {
+    if (!token) {
+      throw new Error('Brak tokena uwierzytelniającego. Zaloguj się ponownie.');
+    }
+
+    const response = await fetch(`${config.backendUrl}/api/player-stats/${gameId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // Przekazanie tokena w nagłówku
       },
       body: JSON.stringify({ starsChange, statsDetails }),
     });
+
+    if (!response.ok) {
+      throw new Error('Nie udało się zaktualizować statystyk gracza.');
+    }
+
     const data = await response.json();
     return data;
   } catch (error) {
@@ -78,28 +103,3 @@ export const updatePlayerStats = async (userId, gameId, starsChange, statsDetail
   }
 };
 
-export const getNextLetter = async (userId) => {
-  try {
-    const token = localStorage.getItem('token'); // Pobierz token z localStorage
-    if (!token) {
-      throw new Error('Brak tokena uwierzytelniającego. Zaloguj się ponownie.');
-    }
-
-    const response = await fetch(`${config.backendUrl}/api/games/letters/next/${userId}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`, // Przekazanie tokena w nagłówku
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Nie udało się pobrać danych z serwera.');
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching next letter:', error);
-    throw error;
-  }
-};
