@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './ColorsGame.css'; // Importuj plik CSS
+import style from './GuestColoursGame.module.css';
 
 const allColors = [
   'czerwony', 'niebieski', 'zielony', 'żółty', 'pomarańczowy',
@@ -21,7 +21,7 @@ const colorMap = {
   'szary': '#808080'
 };
 
-const GuestColorsGame = () => {
+const GuestColoursGame = () => {
   const [currentColor, setCurrentColor] = useState('');
   const [options, setOptions] = useState([]);
   const [colorsStats, setColorsStats] = useState({});
@@ -118,7 +118,6 @@ const GuestColorsGame = () => {
         data = { colorToGuess };
         sessionStorage.setItem('currentColor', colorToGuess);
       }
-      console.log('Fetched next color:', data);
       setCurrentColor(data.colorToGuess);
       speak(`Wskaż kolor ${data.colorToGuess}`);
 
@@ -132,7 +131,6 @@ const GuestColorsGame = () => {
       const optionsArray = Array.from(optionsSet);
       const randomIndex = Math.floor(Math.random() * 4);
       optionsArray.splice(randomIndex, 0, data.colorToGuess); 
-      console.log('Generated options:', optionsArray); 
       setOptions(optionsArray);
 
       const colors = optionsArray.map(color => colorMap[color]);
@@ -194,14 +192,14 @@ const GuestColorsGame = () => {
     const fullStars = Math.floor(points / 2);
     const halfStar = points % 2;
 
-    const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'];
+    const positions = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight', 'center'];
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={`full-${i}`} className={`star full ${positions[i]}`}>★</span>);
+      stars.push(<span key={`full-${i}`} className={`${style.star} ${style.full} ${style[positions[i]]}`}>★</span>);
     }
 
     if (halfStar) {
-      stars.push(<span key="half" className={`star half ${positions[fullStars]}`}>☆</span>);
+      stars.push(<span key="half" className={`${style.star} ${style.half} ${style[positions[fullStars]]}`}>☆</span>);
     }
 
     return stars;
@@ -220,48 +218,55 @@ const GuestColorsGame = () => {
   };
 
   return (
-    <div class="game-c">
-        <div className="header-container">
+    <div className={style.gameC}>
+      <div className={style.headerContainer}>
         <h1>KOLORY</h1>
-        <button className="help-button" onClick={handleHelpGameClick}>
+        <button className={style.helpButton} onClick={handleHelpGameClick}>
           Pomoc <span role="img" aria-label="help">❓🔊</span>
         </button>
       </div>
-      {error && <p className="error-message">{error}</p>}
-      <div className="question-box" onClick={() => speak(`Wskaż kolor ${currentColor}`)}>
+      {error && <p className={style.errorMessage}>{error}</p>}
+      <div className={style.questionBox} onClick={() => speak(`Wskaż kolor ${currentColor}`)}>
         ?
-        <span className="speaker-icon" role="img" aria-label="speaker">🔊</span>
+        <span className={style.speakerIcon} role="img" aria-label="speaker">🔊</span>
       </div>
       {guessed &&       
         <div>
-        <button className="new-game-button" onClick={() => generateNewQuestion(colors)}>Nowa Gra</button>
+          <button className={style.newGameButton} onClick={() => generateNewQuestion(colors)}>Nowa Gra</button>
         </div>
       }
-      <div className="options-container">
+      <div className={style.optionsContainer}>
         {!guessed && (
           options.map((option, index) => (
             <button
               key={index}
               onClick={() => handleOptionClick(option)}
-              className="letter-button"
+              className={style.letterButton}
               style={{ backgroundColor: buttonColors[index] }}
             >
+              {option}
             </button>
           ))
         )}
       </div>
       <div>
-        <div className="header-container">
-            <h1>KOLORY</h1>
-            <button className="help-button" onClick={handleHelpColorsClick}>
-                Pomoc <span role="img" aria-label="help">❓🔊</span>
-              </button>
+        <div className={style.headerContainer}>
+          <h1>KOLORY</h1>
+          <button className={style.helpButton} onClick={handleHelpColorsClick}>
+            Pomoc <span role="img" aria-label="help">❓🔊</span>
+          </button>
         </div>
-        <div className="alphabet-container">
+        <div className={style.alphabetContainer}>
           {allColors.map(color => (
-            <div key={color} className="letter-box" >
-              <button className="letter-square" style={{ backgroundColor: colorMap[color] }} onClick={() => handleColorClick(color)}></button>
-              <div className="stars-square">{renderStars(colorsStats[color]?.colorStats || 0)}</div>
+            <div key={color} className={style.letterBox}>
+              <button
+                className={style.letterSquare}
+                style={{ backgroundColor: colorMap[color] }}
+                onClick={() => handleColorClick(color)}
+              >
+                {color}
+              </button>
+              <div className={style.starsSquare}>{renderStars(colorsStats[color]?.colorStats || 0)}</div>
             </div>
           ))}
         </div>
@@ -270,4 +275,4 @@ const GuestColorsGame = () => {
   );
 };
 
-export default GuestColorsGame;
+export default GuestColoursGame;

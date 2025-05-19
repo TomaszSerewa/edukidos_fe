@@ -1,35 +1,39 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Tworzenie kontekstu
 const UserContext = createContext();
 
-// Provider dla kontekstu
 export const UserProvider = ({ children }) => {
-  const [userId, setUserId] = useState(null);
+  const [user, setUser] = useState(null);
 
-  // Pobieranie userId z sessionStorage przy pierwszym renderze
   useEffect(() => {
-    const storedUserId = sessionStorage.getItem('userId');
-    if (storedUserId) {
-      setUserId(storedUserId);
+    const storedUserId = localStorage.getItem('userId');
+    const storedUserName = localStorage.getItem('userName');
+    const storedUserAvatar = localStorage.getItem('userAvatar');
+
+    if (storedUserId && storedUserName) {
+      setUser({
+        id: storedUserId,
+        name: storedUserName,
+        avatar: storedUserAvatar,
+      });
     }
   }, []);
 
-  // Zapisywanie userId w sessionStorage przy każdej zmianie
-  useEffect(() => {
-    if (userId) {
-      sessionStorage.setItem('userId', userId);
-    } else {
-      sessionStorage.removeItem('userId');
-    }
-  }, [userId]);
-
   return (
-    <UserContext.Provider value={{ userId, setUserId }}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-// Hook do używania kontekstu
-export const useUser = () => useContext(UserContext);
+export const useUser = () => {
+  const { user, setUser } = useContext(UserContext);
+
+  const logout = () => {
+    setUser(null);
+    localStorage.clear(); // Usuń wszystkie dane z localStorage
+    window.location.reload(); // Przeładuj stronę
+  };
+
+  return { user, setUser, logout };
+};

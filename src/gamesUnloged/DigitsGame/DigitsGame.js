@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './DigitsGame.css'; // Importuj plik CSS
+import style from './DigitsGame.module.css';
 
 const allDigits = '0123456789'.split('');
 
@@ -100,7 +100,6 @@ const GuestDigitGame = () => {
         data = { digitToGuess };
         sessionStorage.setItem('currentDigit', digitToGuess);
       }
-      console.log('Fetched next digit:', data);
       setCurrentDigit(data.digitToGuess);
       speak(`Wskaż cyfrę ${data.digitToGuess}`);
 
@@ -114,7 +113,6 @@ const GuestDigitGame = () => {
       const optionsArray = Array.from(optionsSet);
       const randomIndex = Math.floor(Math.random() * 4);
       optionsArray.splice(randomIndex, 0, data.digitToGuess); 
-      console.log('Generated options:', optionsArray); 
       setOptions(optionsArray);
 
       const colors = optionsArray.map(() => getRandomColor());
@@ -176,14 +174,14 @@ const GuestDigitGame = () => {
     const fullStars = Math.floor(points / 2);
     const halfStar = points % 2;
 
-    const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'];
+    const positions = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight', 'center'];
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={`full-${i}`} className={`star full ${positions[i]}`}>★</span>);
+      stars.push(<span key={`full-${i}`} className={`${style.star} ${style.full} ${style[positions[i]]}`}>★</span>);
     }
 
     if (halfStar) {
-      stars.push(<span key="half" className={`star half ${positions[fullStars]}`}>☆</span>);
+      stars.push(<span key="half" className={`${style.star} ${style.half} ${style[positions[fullStars]]}`}>☆</span>);
     }
 
     return stars;
@@ -202,30 +200,30 @@ const GuestDigitGame = () => {
   };
 
   return (
-    <div class="game-c">
-        <div className="header-container">
+    <div className={style.gameC}>
+      <div className={style.headerContainer}>
         <h1>CYFRY</h1>
-        <button className="help-button" onClick={handleHelpGameClick}>
+        <button className={style.helpButton} onClick={handleHelpGameClick}>
           Pomoc <span role="img" aria-label="help">❓🔊</span>
         </button>
       </div>
-      {error && <p className="error-message">{error}</p>}
-      <div className="question-box" onClick={() => speak(`Wskaż cyfrę ${currentDigit}`)}>
+      {error && <p className={style.errorMessage}>{error}</p>}
+      <div className={style.questionBox} onClick={() => speak(`Wskaż cyfrę ${currentDigit}`)}>
         {guessed ? currentDigit : '?'}
-        <span className="speaker-icon" role="img" aria-label="speaker">🔊</span>
+        <span className={style.speakerIcon} role="img" aria-label="speaker">🔊</span>
       </div>
       {guessed &&       
         <div>
-        <button className="new-game-button" onClick={() => generateNewQuestion(digits)}>Nowa Gra</button>
+          <button className={style.newGameButton} onClick={() => generateNewQuestion(digits)}>Nowa Gra</button>
         </div>
       }
-      <div className="options-container">
+      <div className={style.optionsContainer}>
         {!guessed && (
           options.map((option, index) => (
             <button
               key={index}
               onClick={() => handleOptionClick(option)}
-              className="letter-button"
+              className={style.letterButton}
               style={{ backgroundColor: buttonColors[index] }}
             >
               {option}
@@ -234,17 +232,17 @@ const GuestDigitGame = () => {
         )}
       </div>
       <div>
-        <div className="header-container">
-            <h1>CYFRY</h1>
-            <button className="help-button" onClick={handleHelpDigitsClick}>
-                Pomoc <span role="img" aria-label="help">❓🔊</span>
-              </button>
+        <div className={style.headerContainer}>
+          <h1>CYFRY</h1>
+          <button className={style.helpButton} onClick={handleHelpDigitsClick}>
+            Pomoc <span role="img" aria-label="help">❓🔊</span>
+          </button>
         </div>
-        <div className="alphabet-container">
+        <div className={style.alphabetContainer}>
           {allDigits.map(digit => (
-            <div key={digit} className="letter-box">
-              <button className="letter-square" onClick={() => handleDigitClick(digit)}>{digit}</button>
-              <div className="stars-square">{renderStars(digitsStats[digit]?.digitStats || 0)}</div>
+            <div key={digit} className={style.letterBox}>
+              <button className={style.letterSquare} onClick={() => handleDigitClick(digit)}>{digit}</button>
+              <div className={style.starsSquare}>{renderStars(digitsStats[digit]?.digitStats || 0)}</div>
             </div>
           ))}
         </div>

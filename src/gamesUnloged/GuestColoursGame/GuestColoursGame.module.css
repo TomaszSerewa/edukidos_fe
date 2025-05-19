@@ -1,0 +1,313 @@
+.headerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.gameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.questionBox {
+  position: relative; 
+  width: 70vw; 
+  height: 70vw; 
+  max-width: 460px; 
+  max-height: 460px; 
+  background-color: rgb(122, 122, 219);
+  border: 15px solid rgb(255, 255, 255); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 300px;
+  color: white;
+  margin-bottom: 20px;
+  border-radius: 15px; 
+  margin: 0 auto; 
+  cursor: pointer; 
+}
+
+@media (max-width: 500px) {
+  .questionBox {
+    font-size: 200px;
+  }
+}
+
+@media (max-width: 400px) {
+  .questionBox {
+    font-size: 100px;
+    max-width: 150px; 
+    max-height: 150px; 
+  }
+}
+
+.speakerIcon {
+  position: absolute; 
+  bottom: 10px;
+  right: 10px;
+  font-size: 40px; 
+  color: white;
+}
+@media (max-width: 500px) {
+  .speakerIcon {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 400px) {
+  .speakerIcon {
+    font-size: 20px;
+  }
+}
+
+.optionsContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  justify-content: center;
+  max-width: 520px;
+  justify-self: center;
+}
+
+.letterButton {
+  font-family: monospace;
+  font-size: 64px;
+  margin: 10px;
+  border: none;
+  border-radius: 50%; 
+  color: white;
+  cursor: pointer;
+  width: 100px; 
+  height: 100px; 
+  position: relative;
+  background-color: #000;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 500px) {
+  .letterButton {
+    font-size: 48px;
+    width: 75px; 
+    height: 75px; 
+  }
+}
+
+@media (max-width: 400px) {
+  .letterButton {
+    line-height: 10px;
+    font-size: 32px;
+    width: 50px; 
+    height: 50px; 
+  }
+}
+
+.letterButton:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.356);
+}
+
+.letterButton:disabled {
+  background-color: #555; 
+  cursor: not-allowed;
+}
+
+.newGameButton {
+  display: block;
+  width: 70vw; 
+  max-width: 460px; 
+  height: 100px; 
+  font-size: 48px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 20px auto; 
+}
+
+@media (max-width: 400px) {
+  .newGameButton {
+    font-size: 32px;
+  }
+}
+
+.alphabetContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 520px;
+  justify-self: center;
+}
+
+.letterBox {
+  display: flex;
+  background-color: black;
+  border: 2px solid #000;
+  border-radius: 10px;
+  margin: 5px;
+  width: 106px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.letterBox:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.356);
+}
+
+@media (max-width: 500px) {
+  .letterBox {
+    margin: 1px;
+    width: 86px;
+  }
+}
+
+@media (max-width: 400px) {
+  .letterBox {
+    margin: 1px;
+    width: 56px;
+  }
+}
+
+.letterSquare {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  border-right: 2px solid #000;
+  background: black;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+
+@media (max-width: 500px) {
+  .letterSquare {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 400px) {
+  .letterSquare {
+    width: 25px;
+    height: 25px;
+    font-size: 18px;
+  }
+}
+
+.starsSquare {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+@media (max-width: 500px) {
+  .starsSquare {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 400px) {
+  .starsSquare {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+.star {
+  position: absolute;
+  font-size: 22px;
+  color: gold;
+  margin: 0 2px;
+}
+
+@media (max-width: 500px) {
+  .star {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 400px) {
+  .star {
+    font-size: 12px;
+  }
+}
+
+.star.full {
+  color: gold;
+}
+
+.star.half {
+  color: gold;
+}
+
+.star.empty {
+  color: lightgray;
+}
+
+.star.topLeft {
+  top: -4px;
+  left: 0px;
+}
+
+.star.topRight {
+  top: -3px;
+  right: -3px;
+}
+
+.star.bottomLeft {
+  bottom: -2px;
+  left: 0px;
+}
+
+.star.bottomRight {
+  bottom: -2px;
+  right: -3px;
+}
+
+.star.center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@media (max-width: 400px) {
+  .star.center {
+    top: 47%;
+  }
+}
+
+.speakButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.speakButton span {
+  margin-left: 10px;
+}
+
+
+
+
+
+

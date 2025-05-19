@@ -1,0 +1,148 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.forms {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.userLink {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.userLink:hover {
+  text-decoration: underline;
+}
+
+.loginButton,
+.logoutButton,
+.registerButton {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.loginButton:hover,
+.logoutButton:hover,
+.registerButton:hover {
+  background-color: #0056b3;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+input, button {
+  margin: 5px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input {
+  width: 120px; 
+}
+
+button {
+  width: fit-content;
+  background-color: #dd3434;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.356);
+}
+
+@media (max-width: 400px) {
+  button {
+    height: 30px;
+    font-size: 12px;
+    line-height: 10px;
+  }
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-left: 10px; 
+}
+
+.welcome {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.welcome span {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.navbar {
+  background-color: #333;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.navbarList {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+.navbarItem {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+.navbarItem a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.navbarItem:hover {
+  color: #ffcc00;
+}

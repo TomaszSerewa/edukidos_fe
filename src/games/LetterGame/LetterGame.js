@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './LetterGame.css'; // Importuj plik CSS
-import { getNextLetter, getPlayerStats, updatePlayerStats } from '../../common/api'; // Import funkcji API
+import style from './LetterGame.module.css'; 
+import { getPlayerStats } from '../../common/api'; 
+import { getNextLetter, checkLetter } from '../../common/gamesApi/lettersApi'; 
+import { useNavigate } from 'react-router-dom';
 
 const allLetters = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ'.split('');
 
@@ -12,10 +14,12 @@ const LetterGame = () => {
   const [error, setError] = useState('');
   const [voices, setVoices] = useState([]);
   const [guessed, setGuessed] = useState(false);
-  const [buttonColors, setButtonColors] = useState([]);
-  const [letters, setLetters] = useState([]);
-  const userId = localStorage.getItem('userId'); // Pobierz ID użytkownika z localStorage
-  const gameId = 1; // ID gry (możesz ustawić dynamicznie)
+  const [disabledLetters, setDisabledLetters] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [playerName, setPlayerName] = useState('');
+  const [starsCount, setStarsCount] = useState(0);
+  const token = localStorage.getItem('token');
+  const navigate = useNavigate();
   let polishFemaleVoice = voices.find(voice => voice.lang === 'pl-PL' && voice.name.includes('Paulina'));
 
   useEffect(() => {
@@ -37,21 +41,30 @@ const LetterGame = () => {
 
     const initializeGame = async () => {
       try {
-        const token = localStorage.getItem('token'); // Pobierz token z localStorage
         if (!token) {
           throw new Error('Brak tokena uwierzytelniającego. Zaloguj się ponownie.');
         }
 
-        const data = await getNextLetter(userId, token); // Wywołanie funkcji API
-        console.log('Fetched next letter:', data);
+        const letterData = await getNextLetter(token);
+        setCurrentLetter(letterData.correctLetter);
+        setOptions([...letterData.uncorrectLetters, letterData.correctLetter].sort(() => Math.random() - 0.5));
+        speak(`Wskaż literę ${letterData.correctLetter}`);
 
-        // Ustawienie litery do odgadnięcia i opcji
-        setCurrentLetter(data.correctLetter);
-        setOptions([...data.uncorrectLetters, data.correctLetter].sort(() => Math.random() - 0.5)); // Losowe rozmieszczenie opcji
-        speak(`Wskaż literę ${data.correctLetter}`);
+        const statsData = await getPlayerStats(1, token);
+        setLettersStats(statsData.stats_details.alphabet);
+        setPlayerName(statsData.player_name || 'Gracz');
+        setStarsCount(statsData.stars_count || 0);
       } catch (error) {
         console.error('Error initializing game:', error);
-        setError('Nie udało się zainicjalizować gry. Spróbuj ponownie później.');
+        if (error.status === 403) {
+          console.warn('Token jest nieważny. Wylogowywanie użytkownika...');
+          localStorage.clear();
+          navigate('/');
+        } else {
+          setError(error.message || 'Nie udało się zainicjalizować gry. Spróbuj ponownie później.');
+        }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -66,204 +79,131 @@ const LetterGame = () => {
   const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
     if (polishFemaleVoice) {
-      utterance.voice =  polishFemaleVoice;
+      utterance.voice = polishFemaleVoice;
     }
-
     utterance.lang = 'pl-PL'; 
     utterance.rate = 0.9; 
     speechSynthesis.speak(utterance);
   };
 
-  const getRandomColor = () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  };
-
-  const generateNewQuestion = async (filteredLetters) => {
-    setGuessed(false);
-    try {
-      const storedLetter = sessionStorage.getItem('currentLetter');
-      let data;
-      if (storedLetter) {
-        data = { letterToGuess: storedLetter };
-      } else {
-        const letterToGuess = filteredLetters[Math.floor(Math.random() * filteredLetters.length)];
-        data = { letterToGuess };
-        sessionStorage.setItem('currentLetter', letterToGuess);
-      }
-      console.log('Fetched next letter:', data);
-      setCurrentLetter(data.letterToGuess);
-      speak(`Wskaż literę ${data.letterToGuess}`);
-
-      const optionsSet = new Set();
-      while (optionsSet.size < 3) {
-        const randomLetter = filteredLetters[Math.floor(Math.random() * filteredLetters.length)];
-        if (randomLetter !== data.letterToGuess) {
-          optionsSet.add(randomLetter);
-        }
-      }
-      const optionsArray = Array.from(optionsSet);
-      const randomIndex = Math.floor(Math.random() * 4);
-      optionsArray.splice(randomIndex, 0, data.letterToGuess); 
-      console.log('Generated options:', optionsArray); 
-      setOptions(optionsArray);
-
-      const colors = optionsArray.map(() => getRandomColor());
-      setButtonColors(colors);
-
-    } catch (error) {
-      console.error('Error generating new question:', error);
-      setError('Failed to generate new question. Please try again later.');
-    }
-  };
-
-  function betterLetter(letter) {
-    if (letter === 'W') {
-      return 'WU';
-    } 
-    return letter;
-  }
-
-  const getRandomSuccessMessage = (letter) => {
-    const messages = [
-      `Brawo, to litera ${betterLetter(letter)}`,
-      `Super, poznajesz literę ${betterLetter(letter)}`,
-      `Tak, to litera ${betterLetter(letter)}`
-    ];
-    return messages[Math.floor(Math.random() * messages.length)];
-  };
-
   const handleOptionClick = async (option) => {
     try {
-      const updatedStats = { ...lettersStats };
+      const result = await checkLetter(option, token);
 
-      if (!updatedStats[option]) {
-        updatedStats[option] = { letterStats: 0 };
-      }
-      if (!updatedStats[currentLetter]) {
-        updatedStats[currentLetter] = { letterStats: 0 };
-      }
-
-      let isCorrect = false;
-
-      if (option === currentLetter) {
-        setMessage('Correct!');
-        updatedStats[option].letterStats += 1;
+      if (result.correct) {
+        setMessage('Brawo! Poprawna litera!');
         setGuessed(true);
-        speak(getRandomSuccessMessage(option));
-        isCorrect = true;
+        speak(`Brawo! To litera ${option}`);
       } else {
-        setMessage('Try again!');
-        updatedStats[option].letterStats = 0;
-        updatedStats[currentLetter].letterStats = 0;
-        speak(`To jest litera ${option}. Spróbuj jeszcze raz.`);
+        setMessage('Niepoprawna litera. Spróbuj ponownie.');
+        setDisabledLetters((prev) => [...prev, option]);
+        speak(`To nie jest poprawna litera. Spróbuj jeszcze raz.`);
       }
 
-      setLettersStats(updatedStats);
-      sessionStorage.setItem('lettersStats', JSON.stringify(updatedStats));
-      sessionStorage.removeItem('currentLetter');
-      sessionStorage.removeItem('userId');
-
-      // Wyślij statystyki na backend dla zalogowanego użytkownika
-      const playerId = sessionStorage.getItem('playerId'); // Pobierz ID gracza z sesji
-      const gameId = 1; // ID gry (możesz ustawić dynamicznie)
-      if (playerId) {
-        await updatePlayerStats(playerId, gameId, 1, { letter: currentLetter, isCorrect });
+      const statsData = await getPlayerStats(1, token);
+      if (statsData && statsData.stats_details && statsData.stats_details.alphabet) {
+        setLettersStats(statsData.stats_details.alphabet);
+        setStarsCount(statsData.stars_count || 0);
       }
     } catch (error) {
-      console.error('Error updating letter stats:', error);
-      setError('Failed to update letter stats. Please try again later.');
+      console.error('Error checking letter:', error);
+      setError('Wystąpił błąd podczas sprawdzania litery. Spróbuj ponownie później.');
     }
   };
 
-  const renderStars = (points) => {
-    if (points === 0) {
-      return [];
+  const handleNewGame = async () => {
+    try {
+      setGuessed(false);
+      setMessage('');
+      setDisabledLetters([]);
+      setCurrentLetter('');
+      setOptions([]);
+      setError('');
+
+      const letterData = await getNextLetter(token);
+      setCurrentLetter(letterData.correctLetter);
+      setOptions([...letterData.uncorrectLetters, letterData.correctLetter].sort(() => Math.random() - 0.5));
+      speak(`Wskaż literę ${letterData.correctLetter}`);
+    } catch (error) {
+      console.error('Error starting new game:', error);
+      setError('Nie udało się rozpocząć nowej gry. Spróbuj ponownie później.');
     }
-
-    const stars = [];
-    const fullStars = Math.floor(points / 2);
-    const halfStar = points % 2;
-
-    const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'];
-
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={`full-${i}`} className={`star full ${positions[i]}`}>★</span>);
-    }
-
-    if (halfStar) {
-      stars.push(<span key="half" className={`star half ${positions[fullStars]}`}>☆</span>);
-    }
-
-    return stars;
   };
-
-
 
   const handleLetterClick = (letter) => {
-    speak(`To jest litera ${betterLetter(letter)}`);
-  };
-
-  const handleHelpGameClick = () => {
-    speak("Gra polega na wskazaniu litery o którą prosi lektor. Za prawidłowe wskazanie literki otrzymujesz gwiazdki. Zbierz 5 gwiazdek przy każdej literze a zostaniesz mistrzem alfabetu.");
-  };
-
-  const handleHelpLettersClick = () => {
-    speak("Jeżeli nie poznajesz jakiejś litery kliknij na nią aby ją usłyszeć.");
+    speak(`To jest litera ${letter}`);
   };
 
   return (
-    <div class="game-c">
-        <div className="header-container">
-        <h1>LITERKI</h1>
-        <button className="help-button" onClick={handleHelpGameClick}>
-          Pomoc <span role="img" aria-label="help">❓🔊</span>
-        </button>
-      </div>
-      {error && <p className="error-message">{error}</p>}
-      <div className="question-box" onClick={() => speak(`Wskaż literę ${betterLetter(currentLetter)}`)}>
-        {guessed ? currentLetter : '?'}
-        <span className="speaker-icon" role="img" aria-label="speaker">🔊</span>
-      </div>
-      {guessed &&       
-        <div>
-        <button className="new-game-button" onClick={() => generateNewQuestion(letters)}>Nowa Gra</button>
-        </div>
-      }
-      <div className="options-container">
-        {!guessed && (
-          options.map((option, index) => (
-            <button
-              key={index}
-              onClick={() => handleOptionClick(option)}
-              className="letter-button"
-              style={{ backgroundColor: buttonColors[index] }}
-            >
-              {option}
-            </button>
-          ))
-        )}
-      </div>
-      <div>
-        <div className="header-container">
-            <h1>ALFABET</h1>
-            <button className="help-button" onClick={handleHelpLettersClick}>
-                Pomoc <span role="img" aria-label="help">❓🔊</span>
-              </button>
-        </div>
-        <div className="alphabet-container">
-          {allLetters.map(letter => (
-            <div key={letter} className="letter-box">
-              <button className="letter-square" onClick={() => handleLetterClick(letter)}>{letter}</button>
-              <div className="stars-square">{renderStars(lettersStats[letter]?.letterStats || 0)}</div>
+    <div className={style.gameContainer}>
+      {isLoading ? (
+        <p>Ładowanie danych...</p>
+      ) : (
+        <>
+          <div className={style.starsDisplay}>
+            <div className={style.starsText}>
+              {playerName} ma {starsCount} 
             </div>
-          ))}
-        </div>
-      </div>
+            <div className={style.star}>★</div>
+          </div>
+          <div className={style.headerContainer}>
+            <h1>LITERKI</h1>
+          </div>
+          {error && <p className={style.errorMessage}>{error}</p>}
+          <div className={style.questionBox} onClick={() => !guessed && speak(`Wskaż literę ${currentLetter}`)}>
+            {guessed ? currentLetter : '?'}
+          </div>
+          {guessed ? (
+            <button className={style.newGameButton} onClick={handleNewGame}>
+              Nowa Gra
+            </button>
+          ) : (
+            <div className={style.optionsContainer}>
+              {options.map((option, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleOptionClick(option)}
+                  className={style.letterButton}
+                  style={{ backgroundColor: `hsl(${Math.random() * 360}, 70%, 70%)` }} 
+                  disabled={disabledLetters.includes(option)} 
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className={style.alphabetContainer}>
+            {allLetters.map((letter) => (
+              <div key={letter} className={style.letterBox}>
+                <button
+                  className={style.letterSquare}
+                  onClick={() => handleLetterClick(letter)}
+                  style={{
+                    backgroundColor: `hsl(${Math.random() * 360}, 70%, 70%)`,
+                    opacity: disabledLetters.includes(letter) ? 0.5 : 1,
+                    cursor: disabledLetters.includes(letter) ? 'not-allowed' : 'pointer',
+                  }}
+                  disabled={disabledLetters.includes(letter)}
+                >
+                  {letter}
+                </button>
+                <div className={style.starsSquare}>
+                  {lettersStats[letter] > 0 && (
+                    <>
+                      <div className={style.starContainer}>
+                        <span className={style.star}>★</span>
+                      </div>
+                      <div className={style.pointsContainer}>
+                        <span className={style.points}>{lettersStats[letter]}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

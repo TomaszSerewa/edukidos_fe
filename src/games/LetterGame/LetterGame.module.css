@@ -1,11 +1,11 @@
-.header-container {
+.headerContainer {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 20px;
 }
 
-.game-container {
+.gameContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,7 +13,7 @@
   gap: 20px;
 }
 
-.question-box {
+.questionBox {
   position: relative; 
   width: 70vw; 
   height: 70vw; 
@@ -33,40 +33,40 @@
 }
 
 @media (max-width: 500px) {
-  .question-box {
+  .questionBox {
     font-size: 200px;
   }
 }
 
 @media (max-width: 400px) {
-  .question-box {
+  .questionBox {
     font-size: 100px;
     max-width: 150px; 
     max-height: 150px; 
   }
 }
 
-
-.speaker-icon {
+.speakerIcon {
   position: absolute; 
   bottom: 10px;
   right: 10px;
   font-size: 40px; 
   color: white;
 }
+
 @media (max-width: 500px) {
-  .speaker-icon {
+  .speakerIcon {
     font-size: 30px;
   }
 }
 
 @media (max-width: 400px) {
-  .speaker-icon {
+  .speakerIcon {
     font-size: 20px;
   }
 }
 
-.options-container {
+.optionsContainer {
   display: grid;
   grid-template-columns: repeat(4, 1fr); 
   justify-content: center;
@@ -74,7 +74,7 @@
   justify-self: center;
 }
 
-.letter-button {
+.letterButton {
   font-family: monospace;
   font-size: 64px;
   margin: 10px;
@@ -87,10 +87,22 @@
   position: relative;
   background-color: #000;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.letterButton:hover {
+  transform: scale(1.2);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.letterButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 @media (max-width: 500px) {
-  .letter-button {
+  .letterButton {
     font-size: 48px;
     width: 75px; 
     height: 75px; 
@@ -98,7 +110,7 @@
 }
 
 @media (max-width: 400px) {
-  .letter-button {
+  .letterButton {
     line-height: 10px;
     font-size: 32px;
     width: 50px; 
@@ -106,16 +118,16 @@
   }
 }
 
-.letter-button:hover {
+.letterButton:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.356);
 }
 
-.letter-button:disabled {
+.letterButton:disabled {
   background-color: #555; 
   cursor: not-allowed;
 }
 
-.new-game-button {
+.newGameButton {
   display: block;
   width: 70vw; 
   max-width: 460px; 
@@ -130,12 +142,12 @@
 }
 
 @media (max-width: 400px) {
-  .new-game-button {
+  .newGameButton {
     font-size: 32px;
   }
 }
 
-.alphabet-container {
+.alphabetContainer {
   display: grid;
   grid-template-columns: repeat(4, 1fr); 
   flex-wrap: wrap;
@@ -144,154 +156,125 @@
   justify-self: center;
 }
 
-.letter-box {
+.letterBox {
   display: flex;
-  background-color: black;
-  border: 2px solid #000;
-  border-radius: 10px;
-  margin: 5px;
-  width: 106px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-
-.letter-box:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.356);
+  border: none;
+  margin: 5px
 }
 
 @media (max-width: 500px) {
-  .letter-box {
+  .letterBox {
     margin: 1px;
     width: 86px;
   }
 }
 
-
 @media (max-width: 400px) {
-  .letter-box {
+  .letterBox {
     margin: 1px;
     width: 56px;
   }
 }
 
-.letter-square {
+.letterSquare {
   width: 50px;
   height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 32px;
-  border-right: 2px solid #000;
-  background: black;
   border: none;
+  border-radius: 5%;
   cursor: pointer;
-  padding: 0;
-  margin: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: 0px;
 }
 
-@media (max-width: 500px) {
-  .letter-square {
-    width: 40px;
-    height: 40px;
-    font-size: 22px;
-  }
+.letterSquare:hover {
+  transform: scale(1.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-@media (max-width: 400px) {
-  .letter-square {
-    width: 25px;
-    height: 25px;
-    font-size: 18px;
-  }
+.letterSquare:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
-.stars-square {
+.starsSquare {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 50px;
   height: 50px;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: black;
+}
+
+.starContainer {
+  background-color: black;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-}
-
-@media (max-width: 500px) {
-  .stars-square {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-@media (max-width: 400px) {
-  .stars-square {
-    width: 25px;
-    height: 25px;
-  }
+  flex: 1;
 }
 
 .star {
-  position: absolute;
-  font-size: 22px;
   color: gold;
-  margin: 0 2px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 5px;
+}
+
+.pointsContainer {
+  background-color: gold;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.points {
+  color: black;
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 @media (max-width: 500px) {
+  .starsSquare {
+    width: 40px;
+    height: 40px;
+  }
+
   .star {
-    font-size: 18px;
+    font-size: 1.2rem;
+  }
+
+  .points {
+    font-size: 0.8rem;
   }
 }
 
 @media (max-width: 400px) {
+  .starsSquare {
+    width: 30px;
+    height: 30px;
+  }
+
   .star {
-    font-size: 12px;
+    font-size: 1rem;
+  }
+
+  .points {
+    font-size: 0.7rem;
   }
 }
 
-.star.full {
-  color: gold;
-}
-
-.star.half {
-  color: gold;
-}
-
-.star.empty {
-  color: lightgray;
-}
-
-.star.top-left {
-  top: -4px;
-  left: 0px;
-}
-
-.star.top-right {
-  top: -3px;
-  right: -3px;
-}
-
-.star.bottom-left {
-  bottom: -2px;
-  left: 0px;
-}
-
-.star.bottom-right {
-  bottom: -2px;
-  right: -3px;
-}
-
-.star.center {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-@media (max-width: 400px) {
-  .star.center {
-    top: 47%;
-  }
-}
-
-.speak-button {
+.speakButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -305,12 +288,33 @@
   cursor: pointer;
 }
 
-.speak-button span {
+.speakButton span {
   margin-left: 10px;
 }
 
+.starsDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto;
+  padding: 10px;
+  background-color: black;
+  border-radius: 10px;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  width: 90%;
+  max-width: 400px;
+}
 
+.starsText {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 
-
-
-
+.star {
+  color: gold;
+  font-size: 1.5rem;
+  font-weight: bold;
+}

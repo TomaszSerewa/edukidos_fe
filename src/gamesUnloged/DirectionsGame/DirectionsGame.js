@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './DirectionsGame.css'; // Importuj plik CSS
+import style from './DirectionsGame.module.css';
 
 const directions = ['lewo', 'prawo', 'góra', 'dół'];
 
@@ -107,7 +107,6 @@ const GuestDirectionGame = () => {
         data = { directionToGuess };
         sessionStorage.setItem('currentDirection', directionToGuess);
       }
-      console.log('Fetched next direction:', data);
       setCurrentDirection(data.directionToGuess);
       speak(`Wskaż kierunek ${data.directionToGuess}`);
 
@@ -121,7 +120,6 @@ const GuestDirectionGame = () => {
       const optionsArray = Array.from(optionsSet);
       const randomIndex = Math.floor(Math.random() * 4);
       optionsArray.splice(randomIndex, 0, data.directionToGuess); 
-      console.log('Generated options:', optionsArray); 
       setOptions(optionsArray);
 
       const colors = optionsArray.map(() => getRandomColor());
@@ -183,14 +181,14 @@ const GuestDirectionGame = () => {
     const fullStars = Math.floor(points / 2);
     const halfStar = points % 2;
 
-    const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'];
+    const positions = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight', 'center'];
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={`full-${i}`} className={`star full ${positions[i]}`}>★</span>);
+      stars.push(<span key={`full-${i}`} className={`${style.star} ${style.full} ${style[positions[i]]}`}>★</span>);
     }
 
     if (halfStar) {
-      stars.push(<span key="half" className={`star half ${positions[fullStars]}`}>☆</span>);
+      stars.push(<span key="half" className={`${style.star} ${style.half} ${style[positions[fullStars]]}`}>☆</span>);
     }
 
     return stars;
@@ -209,30 +207,30 @@ const GuestDirectionGame = () => {
   };
 
   return (
-    <div class="game-c">
-        <div className="header-container">
+    <div className={style.gameC}>
+      <div className={style.headerContainer}>
         <h1>KIERUNKI</h1>
-        <button className="help-button" onClick={handleHelpGameClick}>
+        <button className={style.helpButton} onClick={handleHelpGameClick}>
           Pomoc <span role="img" aria-label="help">❓🔊</span>
         </button>
       </div>
-      {error && <p className="error-message">{error}</p>}
-      <div className="question-box" onClick={() => speak(`Wskaż kierunek ${currentDirection}`)}>
+      {error && <p className={style.errorMessage}>{error}</p>}
+      <div className={style.questionBox} onClick={() => speak(`Wskaż kierunek ${currentDirection}`)}>
         ?
-        <span className="speaker-icon" role="img" aria-label="speaker">🔊</span>
+        <span className={style.speakerIcon} role="img" aria-label="speaker">🔊</span>
       </div>
       {guessed &&       
         <div>
-        <button className="new-game-button" onClick={() => generateNewQuestion(filteredDirections)}>Nowa Gra</button>
+          <button className={style.newGameButton} onClick={() => generateNewQuestion(filteredDirections)}>Nowa Gra</button>
         </div>
       }
-      <div className="options-container">
+      <div className={style.optionsContainer}>
         {!guessed && (
           options.map((option, index) => (
             <button
               key={index}
               onClick={() => handleOptionClick(option)}
-              className="letter-button"
+              className={style.letterButton}
               style={{ backgroundColor: buttonColors[index] }}
             >
               {directionArrows[option]}
@@ -241,38 +239,37 @@ const GuestDirectionGame = () => {
         )}
       </div>
       <div>
-        <div className="header-container">
-            <h1>KIERUNKI</h1>
-            <button className="help-button" onClick={handleHelpDirectionsClick}>
-                Pomoc <span role="img" aria-label="help">❓🔊</span>
-              </button>
+        <div className={style.headerContainer}>
+          <h1>KIERUNKI</h1>
+          <button className={style.helpButton} onClick={handleHelpDirectionsClick}>
+            Pomoc <span role="img" aria-label="help">❓🔊</span>
+          </button>
         </div>
-
       </div>
-      <div className="directions-container">
-        <div className="direction-box" >
-          <div className="stars-square">{renderStars(directionsStats['góra']?.directionStats || 0)}</div>
-          <button className="direction-square" onClick={() => handleDirectionClick('góra')}>
+      <div className={style.directionsContainer}>
+        <div className={style.directionBox} >
+          <div className={style.starsSquare}>{renderStars(directionsStats['góra']?.directionStats || 0)}</div>
+          <button className={style.directionSquare} onClick={() => handleDirectionClick('góra')}>
             {directionArrows['góra']}
           </button>
         </div>
-        <div className="directions-row">
-          <div className="direction-box">
-            <div className="stars-square">{renderStars(directionsStats['lewo']?.directionStats || 0)}</div>
-            <button className="direction-square" onClick={() => handleDirectionClick('lewo')}>
+        <div className={style.directionsRow}>
+          <div className={style.directionBox}>
+            <div className={style.starsSquare}>{renderStars(directionsStats['lewo']?.directionStats || 0)}</div>
+            <button className={style.directionSquare} onClick={() => handleDirectionClick('lewo')}>
               {directionArrows['lewo']}
             </button>
           </div>
-          <div className="direction-box" >
-            <div className="stars-square">{renderStars(directionsStats['prawo']?.directionStats || 0)}</div>
-            <button className="direction-square" onClick={() => handleDirectionClick('prawo')}>
+          <div className={style.directionBox} >
+            <div className={style.starsSquare}>{renderStars(directionsStats['prawo']?.directionStats || 0)}</div>
+            <button className={style.directionSquare} onClick={() => handleDirectionClick('prawo')}>
               {directionArrows['prawo']}
             </button>
           </div>
         </div>
-        <div className="direction-box" >
-          <div className="stars-square">{renderStars(directionsStats['dół']?.directionStats || 0)}</div>
-          <button className="direction-square" onClick={() => handleDirectionClick('dół')}>
+        <div className={style.directionBox} >
+          <div className={style.starsSquare}>{renderStars(directionsStats['dół']?.directionStats || 0)}</div>
+          <button className={style.directionSquare} onClick={() => handleDirectionClick('dół')}>
             {directionArrows['dół']}
           </button>
         </div>

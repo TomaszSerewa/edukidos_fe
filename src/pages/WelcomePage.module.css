@@ -1,0 +1,37 @@
+.welcome-page {
+  text-align: center;
+  padding: 20px;
+}
+
+.welcome-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.player-info {
+  flex: 1;
+  text-align: left;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.player-info h2 {
+  margin-bottom: 10px;
+}
+
+.player-avatar {
+  flex: 1;
+  text-align: center;
+}
+
+.player-avatar img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 3px solid #ccc;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

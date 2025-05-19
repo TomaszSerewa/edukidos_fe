@@ -1,35 +1,41 @@
 import React, { useState } from 'react';
-import { useUser } from '../UserContext'; // Pobieranie z kontekstu
-import { login } from '../common/api'; // Import funkcji login z common/api.js
+import { useUser } from '../UserContext'; // Import UserContext
+import { login } from '../common/api';
+import { useNavigate } from 'react-router-dom';
 import './Modal.css';
 
 const LoginModal = ({ onClose }) => {
-  const { setUserId } = useUser(); // Pobieranie setUserId z kontekstu
+  const { setUser } = useUser(); // Pobierz funkcję setUser z UserContext
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
     try {
-      const response = await login(email, password); // Wywołanie API login
-      if (response.error) {
-        setError(response.error);
-      } else {
-        const userId = response.user.id;
-        const userName = response.user.login;
-        console.log('Login successful:', response);
-
-        // Ustawienie danych użytkownika
-        setUserId(userId); // Ustawienie userId w kontekście
-        localStorage.setItem('loggedInUser', email);
-        localStorage.setItem('userId', userId);
-        localStorage.setItem('userName', userName);
-        window.location.reload();
-
-        onClose(); // Zamknięcie modala
+      const response = await login(email, password);
+      if (response.error || !response.token || !response.user) {
+        setError(response.error || 'Nieprawidłowa odpowiedź serwera.');
+        return;
       }
+
+      const { token, user } = response;
+
+      // Zapisanie danych użytkownika w localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', user.id);
+      localStorage.setItem('userName', user.name);
+      localStorage.setItem('userAvatar', user.avatar);
+      localStorage.setItem('userBirthDate', user.birthDate);
+      localStorage.setItem('userStars', user.stars);
+
+      // Zaktualizuj stan użytkownika w UserContext
+      setUser(user);
+
+      onClose(); // Zamknięcie modala
+      navigate('/welcome'); // Przekierowanie na WelcomePage
     } catch (err) {
       console.error('Login error:', err);
       setError('Błędny login lub hasło');
