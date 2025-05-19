@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../UserContext'; // Import UserContext
-import './Home.css'; // Stylizacja strony Home
+import styles from './Home.module.css'; // Import CSS module
 
 const Home = () => {
   const { user } = useUser(); // Pobierz dane użytkownika z UserContext
@@ -14,41 +14,41 @@ const Home = () => {
   }, [user, navigate]);
 
   return (
-    <div className="home">
-      <div className="games-gallery">
-        <div className="game-item">
+    <div className={styles.home}>
+      <div className={styles.gamesGallery}>
+        <div className={styles.gameItem}>
           <Link to="/games/letters">
             <img
               src="/img/gamesMiniatures/pokaz_literke_250.png"
               alt="Pokaż literkę"
-              className="game-thumbnail"
+              className={styles.gameThumbnail}
             />
           </Link>
         </div>
-        <div className="game-item">
-          <Link to="/gamesUnlogged/numbers">
+        <div className={styles.gameItem}>
+          <Link to="/gamesUnlogged/digits-unlogged">
             <img
               src="/img/gamesMiniatures/pokaz_cyferke_250.png"
               alt="Pokaż cyferkę"
-              className="game-thumbnail"
+              className={styles.gameThumbnail}
             />
           </Link>
         </div>
-        <div className="game-item">
-          <Link to="/gamesUnlogged/colors">
+        <div className={styles.gameItem}>
+          <Link to="/games/colours">
             <img
               src="/img/gamesMiniatures/pokaz_kolor_250.png"
               alt="Pokaż kolor"
-              className="game-thumbnail"
+              className={styles.gameThumbnail}
             />
           </Link>
         </div>
-        <div className="game-item">
-          <Link to="/gamesUnlogged/directions">
+        <div className={styles.gameItem}>
+          <Link to="/gamesUnlogged/directions-unlogged">
             <img
               src="/img/gamesMiniatures/pokaz_kierunek_250.png"
               alt="Pokaż kolor"
-              className="game-thumbnail"
+              className={styles.gameThumbnail}
             />
           </Link>
         </div>

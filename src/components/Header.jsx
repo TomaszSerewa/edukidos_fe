@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../UserContext'; // Import UserContext
-import './Header.css';
+import styles from './Header.module.css'; // Import modułu CSS jako styles
 import RegisterModal from '../popup/RegisterModal';
 import LoginModal from '../popup/LoginModal';
 
@@ -13,7 +13,7 @@ const Header = () => {
 
   const handleLogout = () => {
     setUser(null); // Wyczyszczenie stanu użytkownika w UserContext
-    localStorage.clear(); 
+    localStorage.clear();
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
     localStorage.removeItem('userAvatar');
@@ -37,10 +37,12 @@ const Header = () => {
 
   function showLogo() {
     return (
-      <div className="logo">
-        <Link to="/" className="logo">
+      <div className={styles.logo}>
+        <Link to="/" className={styles.logo}>
           {logoLetters.map((item, index) => (
-            <span key={index} style={{ color: item.color }}>{item.letter}</span>
+            <span key={index} style={{ color: item.color }}>
+              {item.letter}
+            </span>
           ))}
         </Link>
       </div>
@@ -48,26 +50,32 @@ const Header = () => {
   }
 
   return (
-    <header>
+    <header className={styles.header}>
       {showLogo()}
       {user ? (
-        <div className="forms">
+        <div className={styles.forms}>
           <p>
             Witaj,{' '}
-            <Link to="/welcome" className="user-link">
+            <Link to="/welcome" className={styles.userLink}>
               {user.name}
             </Link>
             !
           </p>
-          <button onClick={handleLogout}>Wyloguj</button>
+          <button onClick={handleLogout} className={styles.logoutButton}>
+            Wyloguj
+          </button>
         </div>
       ) : (
-        <div className="forms">
-          <button onClick={() => setShowLoginModal(true)}>Zaloguj</button>
-          <div className="separator">
-            <div className="circle">LUB</div>
+        <div className={styles.forms}>
+          <button onClick={() => setShowLoginModal(true)} className={styles.loginButton}>
+            Zaloguj
+          </button>
+          <div className={styles.separator}>
+            <div className={styles.circle}>LUB</div>
           </div>
-          <button onClick={() => setShowRegisterModal(true)}>Zarejestruj</button>
+          <button onClick={() => setShowRegisterModal(true)} className={styles.registerButton}>
+            Zarejestruj
+          </button>
         </div>
       )}
       {showRegisterModal && <RegisterModal onClose={() => setShowRegisterModal(false)} />}

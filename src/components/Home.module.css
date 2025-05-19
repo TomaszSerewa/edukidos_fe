@@ -3,7 +3,7 @@
   padding: 20px;
 }
 
-.games-gallery {
+.gamesGallery {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -11,7 +11,7 @@
   margin-top: 20px;
 }
 
-.game-item {
+.gameItem {
   text-align: center;
   width: 250px;
   border: 2px solid #ddd;
@@ -20,20 +20,13 @@
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.game-item:hover {
+.gameItem:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.game-thumbnail {
+.gameThumbnail {
   width: 100%;
   height: auto;
   border-radius: 10px;
-}
-
-.game-title {
-  margin-top: 10px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
 }

@@ -1,11 +1,11 @@
-.header-container {
+.headerContainer {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 20px;
 }
 
-.game-container {
+.gameContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,7 +13,7 @@
   gap: 20px;
 }
 
-.question-box {
+.questionBox {
   position: relative; 
   width: 70vw; 
   height: 70vw; 
@@ -33,21 +33,20 @@
 }
 
 @media (max-width: 500px) {
-  .question-box {
+  .questionBox {
     font-size: 200px;
   }
 }
 
 @media (max-width: 400px) {
-  .question-box {
+  .questionBox {
     font-size: 100px;
     max-width: 150px; 
     max-height: 150px; 
   }
 }
 
-
-.speaker-icon {
+.speakerIcon {
   position: absolute; 
   bottom: 10px;
   right: 10px;
@@ -55,18 +54,18 @@
   color: white;
 }
 @media (max-width: 500px) {
-  .speaker-icon {
+  .speakerIcon {
     font-size: 30px;
   }
 }
 
 @media (max-width: 400px) {
-  .speaker-icon {
+  .speakerIcon {
     font-size: 20px;
   }
 }
 
-.options-container {
+.optionsContainer {
   display: grid;
   grid-template-columns: repeat(4, 1fr); 
   justify-content: center;
@@ -74,7 +73,7 @@
   justify-self: center;
 }
 
-.letter-button {
+.letterButton {
   font-family: monospace;
   font-size: 64px;
   margin: 10px;
@@ -89,14 +88,14 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.letter-button:disabled {
+.letterButton:disabled {
   background-color: #ccc;
   cursor: not-allowed;
   opacity: 0.6;
 }
 
 @media (max-width: 500px) {
-  .letter-button {
+  .letterButton {
     font-size: 48px;
     width: 75px; 
     height: 75px; 
@@ -104,7 +103,7 @@
 }
 
 @media (max-width: 400px) {
-  .letter-button {
+  .letterButton {
     line-height: 10px;
     font-size: 32px;
     width: 50px; 
@@ -112,16 +111,16 @@
   }
 }
 
-.letter-button:hover {
+.letterButton:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.356);
 }
 
-.letter-button:disabled {
+.letterButton:disabled {
   background-color: #555; 
   cursor: not-allowed;
 }
 
-.new-game-button {
+.newGameButton {
   display: block;
   width: 70vw; 
   max-width: 460px; 
@@ -136,12 +135,12 @@
 }
 
 @media (max-width: 400px) {
-  .new-game-button {
+  .newGameButton {
     font-size: 32px;
   }
 }
 
-.alphabet-container {
+.alphabetContainer {
   display: grid;
   grid-template-columns: repeat(4, 1fr); 
   flex-wrap: wrap;
@@ -150,7 +149,7 @@
   justify-self: center;
 }
 
-.letter-box {
+.letterBox {
   display: flex;
   background-color: black;
   border: 2px solid #000;
@@ -160,27 +159,25 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-
-.letter-box:hover {
+.letterBox:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.356);
 }
 
 @media (max-width: 500px) {
-  .letter-box {
+  .letterBox {
     margin: 1px;
     width: 86px;
   }
 }
 
-
 @media (max-width: 400px) {
-  .letter-box {
+  .letterBox {
     margin: 1px;
     width: 56px;
   }
 }
 
-.letter-square {
+.letterSquare {
   width: 50px;
   height: 50px;
   display: flex;
@@ -196,7 +193,7 @@
 }
 
 @media (max-width: 500px) {
-  .letter-square {
+  .letterSquare {
     width: 40px;
     height: 40px;
     font-size: 22px;
@@ -204,14 +201,14 @@
 }
 
 @media (max-width: 400px) {
-  .letter-square {
+  .letterSquare {
     width: 25px;
     height: 25px;
     font-size: 18px;
   }
 }
 
-.stars-square {
+.starsSquare {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -220,11 +217,11 @@
   height: 50px;
   border-radius: 5px;
   overflow: hidden;
-  background-color: black; /* Tło dla całego kontenera */
+  background-color: black;
 }
 
-.star-container {
-  background-color: black; /* Tło dla gwiazdki */
+.starContainer {
+  background-color: black;
   width: 100%;
   display: flex;
   align-items: center;
@@ -233,14 +230,14 @@
 }
 
 .star {
-  color: gold; /* Kolor gwiazdki */
+  color: gold;
   font-size: 1.5rem;
   font-weight: bold;
   margin: 0 5px;
 }
 
-.points-container {
-  background-color: gold; /* Tło dla liczby punktów */
+.pointsContainer {
+  background-color: gold;
   width: 100%;
   display: flex;
   align-items: center;
@@ -249,13 +246,13 @@
 }
 
 .points {
-  color: black; /* Kolor liczby punktów */
+  color: black;
   font-size: 1rem;
   font-weight: bold;
 }
 
 @media (max-width: 500px) {
-  .stars-square {
+  .starsSquare {
     width: 40px;
     height: 40px;
   }
@@ -270,7 +267,7 @@
 }
 
 @media (max-width: 400px) {
-  .stars-square {
+  .starsSquare {
     width: 30px;
     height: 30px;
   }
@@ -284,7 +281,7 @@
   }
 }
 
-.speak-button {
+.speakButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -298,47 +295,47 @@
   cursor: pointer;
 }
 
-.speak-button span {
+.speakButton span {
   margin-left: 10px;
 }
 
-.stars-display {
+.starsDisplay {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 20px auto; /* Wyśrodkowanie */
+  margin: 20px auto;
   padding: 10px;
-  background-color: black; /* Tło prostokąta */
-  border-radius: 10px; /* Zaokrąglone rogi */
-  color: white; /* Kolor tekstu */
+  background-color: black;
+  border-radius: 10px;
+  color: white;
   font-size: 1.2rem;
   font-weight: bold;
-  width: 90%; /* Szerokość odpowiadająca szerokości question-box */
-  max-width: 400px; /* Maksymalna szerokość */
+  width: 90%;
+  max-width: 400px;
 }
 
-.stars-text {
+.starsText {
   text-align: center;
 }
 
-.stars-icon {
+.starsIcon {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.gold-square {
+.goldSquare {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 50px;
   height: 50px;
-  background-color: gold; /* Tło złotego kwadratu */
-  color: black; /* Kolor tekstu */
+  background-color: gold;
+  color: black;
   font-size: 1.5rem;
   font-weight: bold;
-  border-radius: 10px; /* Zaokrąglone rogi */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Efekt cienia */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 

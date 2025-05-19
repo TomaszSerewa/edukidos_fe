@@ -1,17 +1,35 @@
-import config from './config';
 import axios from 'axios';
+import config from './config';
+import { useUser } from '../UserContext';
+
+const api = axios.create({
+  baseURL: config.backendUrl,
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      const { logout } = useUser();
+      logout(); // Wyloguj użytkownika, jeśli token jest nieważny
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;
 
 export const register = async (name, email, password, avatar, data_urodzenia) => {
   try {
-    const response = await fetch(`${config.backendUrl}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, password, avatar, data_urodzenia }),
+    const response = await api.post('/auth/register', {
+      name,
+      email,
+      password,
+      avatar,
+      data_urodzenia,
     });
-    const data = await response.json();
-    if (response.ok) {
+    const data = response.data;
+    if (response.status === 200) {
       // Zapisz token w localStorage
       localStorage.setItem('token', data.token);
       localStorage.setItem('userName', data.user.name);
@@ -31,19 +49,12 @@ export const login = async (email, password) => {
 
     console.log('Login:', email);
 
-    const response = await fetch(`${config.backendUrl}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ login: email, password }), // Przekazanie loginu i hasła
+    const response = await api.post('/auth/login', {
+      login: email,
+      password, // Przekazanie loginu i hasła
     });
 
-    if (!response.ok) {
-      throw new Error('Nieprawidłowe dane logowania.');
-    }
-
-    const data = await response.json();
+    const data = response.data;
     return data;
   } catch (error) {
     console.error('Error logging in:', error);
@@ -57,18 +68,13 @@ export const getPlayerStats = async (gameId, token) => {
       throw new Error('Brak tokena uwierzytelniającego. Zaloguj się ponownie.');
     }
 
-    const response = await fetch(`${config.backendUrl}/api/player-stats/${gameId}`, {
-      method: 'GET',
+    const response = await api.get(`/api/player-stats/${gameId}`, {
       headers: {
         Authorization: `Bearer ${token}`, // Przekazanie tokena w nagłówku
       },
     });
 
-    if (!response.ok) {
-      throw new Error('Nie udało się pobrać statystyk gracza.');
-    }
-
-    const data = await response.json();
+    const data = response.data;
     return data;
   } catch (error) {
     console.error('Error fetching player stats:', error);
@@ -82,24 +88,32 @@ export const updatePlayerStats = async (gameId, starsChange, statsDetails, token
       throw new Error('Brak tokena uwierzytelniającego. Zaloguj się ponownie.');
     }
 
-    const response = await fetch(`${config.backendUrl}/api/player-stats/${gameId}`, {
-      method: 'PUT',
+    const response = await api.put(`/api/player-stats/${gameId}`, {
+      starsChange,
+      statsDetails,
+    }, {
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`, // Przekazanie tokena w nagłówku
       },
-      body: JSON.stringify({ starsChange, statsDetails }),
     });
 
-    if (!response.ok) {
-      throw new Error('Nie udało się zaktualizować statystyk gracza.');
-    }
-
-    const data = await response.json();
+    const data = response.data;
     return data;
   } catch (error) {
     console.error('Error updating player stats:', error);
     throw error;
   }
+};
+
+// Funkcja pomocnicza do obsługi błędów HTTP
+export const handleHttpError = async (response) => {
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw {
+      status: response.status,
+      message: errorData.message || 'Błąd serwera',
+    };
+  }
+  return response.json();
 };
 

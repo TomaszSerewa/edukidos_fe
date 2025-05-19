@@ -26,4 +26,14 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-export const useUser = () => useContext(UserContext);
+export const useUser = () => {
+  const { user, setUser } = useContext(UserContext);
+
+  const logout = () => {
+    setUser(null);
+    localStorage.clear(); // Usuń wszystkie dane z localStorage
+    window.location.reload(); // Przeładuj stronę
+  };
+
+  return { user, setUser, logout };
+};

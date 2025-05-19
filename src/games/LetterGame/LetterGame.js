@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './LetterGame.css'; 
+import style from './LetterGame.module.css'; 
 import { getPlayerStats } from '../../common/api'; 
 import { getNextLetter, checkLetter } from '../../common/gamesApi/lettersApi'; 
+import { useNavigate } from 'react-router-dom';
 
 const allLetters = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ'.split('');
 
@@ -13,11 +14,12 @@ const LetterGame = () => {
   const [error, setError] = useState('');
   const [voices, setVoices] = useState([]);
   const [guessed, setGuessed] = useState(false);
-  const [disabledLetters, setDisabledLetters] = useState([]); // Lista nieaktywnych liter
-  const [isLoading, setIsLoading] = useState(true); // Dodaj stan isLoading
+  const [disabledLetters, setDisabledLetters] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [playerName, setPlayerName] = useState('');
   const [starsCount, setStarsCount] = useState(0);
-  const token = localStorage.getItem('token'); // Pobierz token z localStorage
+  const token = localStorage.getItem('token');
+  const navigate = useNavigate();
   let polishFemaleVoice = voices.find(voice => voice.lang === 'pl-PL' && voice.name.includes('Paulina'));
 
   useEffect(() => {
@@ -43,30 +45,26 @@ const LetterGame = () => {
           throw new Error('Brak tokena uwierzytelniającego. Zaloguj się ponownie.');
         }
 
-        // Pobierz literę do odgadnięcia
         const letterData = await getNextLetter(token);
-        console.log('Fetched next letter:', letterData);
-
-        // Ustawienie litery do odgadnięcia i opcji
         setCurrentLetter(letterData.correctLetter);
         setOptions([...letterData.uncorrectLetters, letterData.correctLetter].sort(() => Math.random() - 0.5));
         speak(`Wskaż literę ${letterData.correctLetter}`);
 
-        // Pobierz statystyki gracza
-        const statsData = await getPlayerStats(1, token); // Zakładamy gameId = 1
-        console.log('Fetched player stats:', statsData);
-
-        // Ustaw statystyki liter
+        const statsData = await getPlayerStats(1, token);
         setLettersStats(statsData.stats_details.alphabet);
-
-        // Ustaw nazwę gracza i liczbę gwiazdek
-        setPlayerName(statsData.player_name || 'Gracz'); // Zakładamy, że `player_name` jest w `statsData`
+        setPlayerName(statsData.player_name || 'Gracz');
         setStarsCount(statsData.stars_count || 0);
       } catch (error) {
         console.error('Error initializing game:', error);
-        setError('Nie udało się zainicjalizować gry. Spróbuj ponownie później.');
+        if (error.status === 403) {
+          console.warn('Token jest nieważny. Wylogowywanie użytkownika...');
+          localStorage.clear();
+          navigate('/');
+        } else {
+          setError(error.message || 'Nie udało się zainicjalizować gry. Spróbuj ponownie później.');
+        }
       } finally {
-        setIsLoading(false); // Ustaw isLoading na false po zakończeniu ładowania
+        setIsLoading(false);
       }
     };
 
@@ -83,7 +81,6 @@ const LetterGame = () => {
     if (polishFemaleVoice) {
       utterance.voice = polishFemaleVoice;
     }
-
     utterance.lang = 'pl-PL'; 
     utterance.rate = 0.9; 
     speechSynthesis.speak(utterance);
@@ -91,24 +88,22 @@ const LetterGame = () => {
 
   const handleOptionClick = async (option) => {
     try {
-      // Wywołaj endpoint do sprawdzania litery
       const result = await checkLetter(option, token);
 
       if (result.correct) {
         setMessage('Brawo! Poprawna litera!');
-        setGuessed(true); // Ustaw stan na odgadnięte
+        setGuessed(true);
         speak(`Brawo! To litera ${option}`);
       } else {
         setMessage('Niepoprawna litera. Spróbuj ponownie.');
-        setDisabledLetters((prev) => [...prev, option]); // Dodaj literę do listy nieaktywnych
+        setDisabledLetters((prev) => [...prev, option]);
         speak(`To nie jest poprawna litera. Spróbuj jeszcze raz.`);
       }
 
-      // Pobierz zaktualizowane statystyki gracza
-      const statsData = await getPlayerStats(1, token); // Zakładamy gameId = 1
+      const statsData = await getPlayerStats(1, token);
       if (statsData && statsData.stats_details && statsData.stats_details.alphabet) {
-        setLettersStats(statsData.stats_details.alphabet); // Zaktualizuj statystyki liter
-        setStarsCount(statsData.stars_count || 0); // Zaktualizuj liczbę gwiazdek
+        setLettersStats(statsData.stats_details.alphabet);
+        setStarsCount(statsData.stars_count || 0);
       }
     } catch (error) {
       console.error('Error checking letter:', error);
@@ -125,11 +120,7 @@ const LetterGame = () => {
       setOptions([]);
       setError('');
 
-      // Pobierz nową literę do odgadnięcia
       const letterData = await getNextLetter(token);
-      console.log('Fetched new letter for new game:', letterData);
-
-      // Ustaw nową literę i opcje
       setCurrentLetter(letterData.correctLetter);
       setOptions([...letterData.uncorrectLetters, letterData.correctLetter].sort(() => Math.random() - 0.5));
       speak(`Wskaż literę ${letterData.correctLetter}`);
@@ -144,61 +135,72 @@ const LetterGame = () => {
   };
 
   return (
-    <div className="game-c">
+    <div className={style.gameContainer}>
       {isLoading ? (
-        <p>Ładowanie danych...</p> // Placeholder podczas ładowania
+        <p>Ładowanie danych...</p>
       ) : (
         <>
-          <div className="header-container">
+          <div className={style.starsDisplay}>
+            <div className={style.starsText}>
+              {playerName} ma {starsCount} 
+            </div>
+            <div className={style.star}>★</div>
+          </div>
+          <div className={style.headerContainer}>
             <h1>LITERKI</h1>
           </div>
-          {error && <p className="error-message">{error}</p>}
-          <div className="question-box" onClick={() => !guessed && speak(`Wskaż literę ${currentLetter}`)}>
+          {error && <p className={style.errorMessage}>{error}</p>}
+          <div className={style.questionBox} onClick={() => !guessed && speak(`Wskaż literę ${currentLetter}`)}>
             {guessed ? currentLetter : '?'}
           </div>
           {guessed ? (
-            <button className="new-game-button" onClick={handleNewGame}>
+            <button className={style.newGameButton} onClick={handleNewGame}>
               Nowa Gra
             </button>
           ) : (
-            <div className="options-container">
+            <div className={style.optionsContainer}>
               {options.map((option, index) => (
                 <button
                   key={index}
                   onClick={() => handleOptionClick(option)}
-                  className="letter-button"
-                  disabled={disabledLetters.includes(option)} // Wyłącz przycisk, jeśli litera jest nieaktywna
+                  className={style.letterButton}
+                  style={{ backgroundColor: `hsl(${Math.random() * 360}, 70%, 70%)` }} 
+                  disabled={disabledLetters.includes(option)} 
                 >
                   {option}
                 </button>
               ))}
             </div>
           )}
-          <div className="alphabet-container">
-            {allLetters.map(letter => (
-              <div key={letter} className="letter-box">
-                <button className="letter-square" onClick={() => handleLetterClick(letter)}>
+          <div className={style.alphabetContainer}>
+            {allLetters.map((letter) => (
+              <div key={letter} className={style.letterBox}>
+                <button
+                  className={style.letterSquare}
+                  onClick={() => handleLetterClick(letter)}
+                  style={{
+                    backgroundColor: `hsl(${Math.random() * 360}, 70%, 70%)`,
+                    opacity: disabledLetters.includes(letter) ? 0.5 : 1,
+                    cursor: disabledLetters.includes(letter) ? 'not-allowed' : 'pointer',
+                  }}
+                  disabled={disabledLetters.includes(letter)}
+                >
                   {letter}
                 </button>
-                <div className="stars-square">
+                <div className={style.starsSquare}>
                   {lettersStats[letter] > 0 && (
                     <>
-                      <div className="star-container">
-                        <span className="star">★</span>
+                      <div className={style.starContainer}>
+                        <span className={style.star}>★</span>
                       </div>
-                      <div className="points-container">
-                        <span className="points">{lettersStats[letter]}</span>
+                      <div className={style.pointsContainer}>
+                        <span className={style.points}>{lettersStats[letter]}</span>
                       </div>
                     </>
                   )}
                 </div>
               </div>
             ))}
-          </div>
-          <div className="stars-display">
-            <div className="stars-text">
-              {playerName} ma {starsCount} <span className="star">★</span>
-            </div>
           </div>
         </>
       )}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './GuestLetterGame.css'; // Importuj plik CSS
+import style from './GuestLetterGame.module.css';
 
 const letters = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ'.split('');
 
@@ -93,7 +93,6 @@ const GuestLetterGame = () => {
         data = { letterToGuess };
         sessionStorage.setItem('currentLetter', letterToGuess);
       }
-      console.log('Fetched next letter:', data);
       setCurrentLetter(data.letterToGuess);
       speak(`Wskaż literę ${data.letterToGuess}`);
 
@@ -107,7 +106,6 @@ const GuestLetterGame = () => {
       const optionsArray = Array.from(optionsSet);
       const randomIndex = Math.floor(Math.random() * 4);
       optionsArray.splice(randomIndex, 0, data.letterToGuess); 
-      console.log('Generated options:', optionsArray); 
       setOptions(optionsArray);
 
       const colors = optionsArray.map(() => getRandomColor());
@@ -148,7 +146,7 @@ const GuestLetterGame = () => {
         setMessage('Try again!');
         updatedStats[option].letterStats = 0;
         updatedStats[currentLetter].letterStats = 0;
-        speak(`To jest litera ${option}., Spróbuj jeszcze raz.`);
+        speak(`To jest litera ${option}. Spróbuj jeszcze raz.`);
       }
 
       setLettersStats(updatedStats);
@@ -169,14 +167,14 @@ const GuestLetterGame = () => {
     const fullStars = Math.floor(points / 2);
     const halfStar = points % 2;
 
-    const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'];
+    const positions = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight', 'center'];
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={`full-${i}`} className={`star full ${positions[i]}`}>★</span>);
+      stars.push(<span key={`full-${i}`} className={`${style.star} ${style.full} ${style[positions[i]]}`}>★</span>);
     }
 
     if (halfStar) {
-      stars.push(<span key="half" className={`star half ${positions[fullStars]}`}>☆</span>);
+      stars.push(<span key="half" className={`${style.star} ${style.half} ${style[positions[fullStars]]}`}>☆</span>);
     }
 
     return stars;
@@ -189,7 +187,6 @@ const GuestLetterGame = () => {
     }
     if (letter === 'Ę'){
       speak(`To jest litera ę`);
-
       return;
     }
     speak(`To jest litera ${letter}`);
@@ -204,30 +201,30 @@ const GuestLetterGame = () => {
   };
   
   return (
-    <div class="game-c">
-        <div className="header-container">
+    <div className={style.gameContainer}>
+      <div className={style.headerContainer}>
         <h1>LITERKI</h1>
-        <button className="help-button" onClick={handleHelpGameClick}>
+        <button className={style.helpButton} onClick={handleHelpGameClick}>
           Pomoc <span role="img" aria-label="help">❓🔊</span>
         </button>
       </div>
-      {error && <p className="error-message">{error}</p>}
-      <div className="question-box" onClick={() => speak(`Wskaż literę ${currentLetter}`)}>
+      {error && <p className={style.errorMessage}>{error}</p>}
+      <div className={style.questionBox} onClick={() => speak(`Wskaż literę ${currentLetter}`)}>
         {guessed ? currentLetter : '?'}
-        <span className="speaker-icon" role="img" aria-label="speaker">🔊</span>
+        <span className={style.speakerIcon} role="img" aria-label="speaker">🔊</span>
       </div>
       {guessed &&       
         <div>
-        <button className="new-game-button" onClick={generateNewQuestion}>Nowa Gra</button>
+          <button className={style.newGameButton} onClick={generateNewQuestion}>Nowa Gra</button>
         </div>
       }
-      <div className="options-container">
+      <div className={style.optionsContainer}>
         {!guessed && (
           options.map((option, index) => (
             <button
               key={index}
               onClick={() => handleOptionClick(option)}
-              className="letter-button"
+              className={style.letterButton}
               style={{ backgroundColor: buttonColors[index] }}
             >
               {option}
@@ -236,17 +233,17 @@ const GuestLetterGame = () => {
         )}
       </div>
       <div>
-        <div className="header-container">
-            <h1>ALFABET</h1>
-            <button className="help-button" onClick={handleHelpLettersClick}>
-                Pomoc <span role="img" aria-label="help">❓🔊</span>
-              </button>
+        <div className={style.headerContainer}>
+          <h1>ALFABET</h1>
+          <button className={style.helpButton} onClick={handleHelpLettersClick}>
+            Pomoc <span role="img" aria-label="help">❓🔊</span>
+          </button>
         </div>
-        <div className="alphabet-container">
+        <div className={style.alphabetContainer}>
           {letters.map(letter => (
-            <div key={letter} className="letter-box">
-              <button className="letter-square" onClick={() => handleLetterClick(letter)}>{letter}</button>
-              <div className="stars-square">{renderStars(lettersStats[letter]?.letterStats || 0)}</div>
+            <div key={letter} className={style.letterBox}>
+              <button className={style.letterSquare} onClick={() => handleLetterClick(letter)}>{letter}</button>
+              <div className={style.starsSquare}>{renderStars(lettersStats[letter]?.letterStats || 0)}</div>
             </div>
           ))}
         </div>

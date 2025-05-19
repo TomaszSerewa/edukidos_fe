@@ -1,14 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import './ColoursGame.css'; // Stylizacja gry
-import { getNextColor, checkColor } from '../../common/gamesApi/coloursApi';
+import style from './ColoursGame.module.css'; 
+import { getPlayerStats } from '../../common/api'; 
+import { getNextColor, checkColor } from '../../common/gamesApi/coloursApi'; 
+import { useNavigate } from 'react-router-dom';
 
-const ColoursGame = () => {
+// Mapowanie angielskich nazw kolorów na polskie
+const colorTranslations = {
+  'red': 'czerwony',
+  'blue': 'niebieski',
+  'green': 'zielony',
+  'yellow': 'żółty',
+  'orange': 'pomarańczowy',
+  'purple': 'fioletowy',
+  'pink': 'różowy',
+  'brown': 'brązowy',
+  'black': 'czarny',
+  'white': 'biały',
+  'skyblue': 'błękitny',
+  'gray': 'szary',
+};
+
+// Mapowanie kolorów RGB
+const colors = {
+  'red': '#FF0000',
+  'blue': '#0000FF',
+  'green': '#008000',
+  'yellow': '#FFFF00',
+  'orange': '#FFA500',
+  'purple': '#800080',
+  'pink': '#FFC0CB',
+  'brown': '#A52A2A',
+  'black': '#000000',
+  'white': '#FFFFFF',
+  'skyblue': '#00BFFF',
+  'gray': '#808080',
+};
+
+// Lista wszystkich kolorów (angielskie nazwy)
+const allColors = Object.keys(colors);
+
+const ColorGame = () => {
   const [currentColor, setCurrentColor] = useState('');
   const [options, setOptions] = useState([]);
+  const [colorsStats, setColorsStats] = useState({});
   const [message, setMessage] = useState('');
-  const [starsCount, setStarsCount] = useState(0);
+  const [error, setError] = useState('');
+  const [guessed, setGuessed] = useState(false);
+  const [disabledColors, setDisabledColors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const token = localStorage.getItem('token'); // Pobierz token z localStorage
+  const [playerName, setPlayerName] = useState('');
+  const [starsCount, setStarsCount] = useState(0);
+  const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const initializeGame = async () => {
@@ -17,77 +60,148 @@ const ColoursGame = () => {
           throw new Error('Brak tokena uwierzytelniającego. Zaloguj się ponownie.');
         }
 
-        // Pobierz dane dla następnego koloru
+        // Pobierz kolor do odgadnięcia
         const colorData = await getNextColor(token);
+
+        // Ustawienie koloru do odgadnięcia i opcji
         setCurrentColor(colorData.correctColor);
         setOptions([...colorData.uncorrectColors, colorData.correctColor].sort(() => Math.random() - 0.5));
+        speak(`Wskaż kolor ${colorTranslations[colorData.correctColor]}`);
+
+        // Pobierz statystyki gracza
+        const statsData = await getPlayerStats(2, token);
+
+        // Ustaw statystyki kolorów
+        setColorsStats(statsData.stats_details.colors);
+
+        // Ustaw nazwę gracza i liczbę gwiazdek
+        setPlayerName(statsData.player_name || 'Gracz');
+        setStarsCount(statsData.stars_count || 0);
       } catch (error) {
         console.error('Error initializing game:', error);
-        setMessage('Nie udało się zainicjalizować gry. Spróbuj ponownie później.');
+
+        if (error.status === 403) {
+          console.warn('Token jest nieważny. Przekierowanie na stronę główną...');
+          localStorage.clear();
+          navigate('/');
+        } else {
+          setError(error.message || 'Nie udało się zainicjalizować gry. Spróbuj ponownie później.');
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     initializeGame();
-  }, [token]);
+  }, [token, navigate]);
 
-  const handleOptionClick = async (color) => {
+  const speak = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'pl-PL'; 
+    utterance.rate = 0.9; 
+    speechSynthesis.speak(utterance);
+  };
+
+  const handleOptionClick = async (option) => {
     try {
-      const result = await checkColor(color, token);
+      const result = await checkColor(option, token);
 
       if (result.correct) {
         setMessage('Brawo! Poprawny kolor!');
-        setStarsCount(result.stars_count || 0); // Zaktualizuj liczbę gwiazdek
-        setTimeout(() => startNewGame(), 2000); // Rozpocznij nową grę po 2 sekundach
+        setGuessed(true);
+        speak(`Brawo! To kolor ${colorTranslations[option]}`);
       } else {
-        setMessage('Niestety, spróbuj ponownie.');
+        setMessage('Niepoprawny kolor. Spróbuj ponownie.');
+        setDisabledColors((prev) => [...prev, option]);
+        speak(`To nie jest poprawny kolor. Spróbuj jeszcze raz.`);
+      }
+
+      // Pobierz zaktualizowane statystyki gracza
+      const statsData = await getPlayerStats(2, token);
+      if (statsData && statsData.stats_details && statsData.stats_details.colors) {
+        setColorsStats(statsData.stats_details.colors);
+        setStarsCount(statsData.stars_count || 0);
       }
     } catch (error) {
       console.error('Error checking color:', error);
-      setMessage('Wystąpił błąd podczas sprawdzania koloru. Spróbuj ponownie później.');
+      setError('Wystąpił błąd podczas sprawdzania koloru. Spróbuj ponownie później.');
     }
   };
 
-  const startNewGame = async () => {
-    setMessage('');
-    setIsLoading(true);
-
+  const handleNewGame = async () => {
     try {
+      setGuessed(false);
+      setMessage('');
+      setDisabledColors([]);
+      setCurrentColor('');
+      setOptions([]);
+      setError('');
+
       const colorData = await getNextColor(token);
       setCurrentColor(colorData.correctColor);
       setOptions([...colorData.uncorrectColors, colorData.correctColor].sort(() => Math.random() - 0.5));
+      speak(`Wskaż kolor ${colorTranslations[colorData.correctColor]}`);
     } catch (error) {
       console.error('Error starting new game:', error);
-      setMessage('Nie udało się rozpocząć nowej gry. Spróbuj ponownie później.');
-    } finally {
-      setIsLoading(false);
+      setError('Nie udało się rozpocząć nowej gry. Spróbuj ponownie później.');
     }
   };
 
   return (
-    <div className="game-container">
+    <div className={style.gameC}>
       {isLoading ? (
-        <p>Ładowanie gry...</p>
+        <p>Ładowanie danych...</p>
       ) : (
         <>
-          <h1>Gra w Kolory</h1>
-          <p>Wskaż kolor: <strong>{currentColor}</strong></p>
-          <div className="options-container">
-            {options.map((color, index) => (
-              <button
-                key={index}
-                onClick={() => handleOptionClick(color)}
-                style={{ backgroundColor: color }}
-                className="color-button"
-              >
-                {color}
-              </button>
+          <div className={style.headerContainer}>
+            <h1>KOLORY</h1>
+          </div>
+          {error && <p className={style.errorMessage}>{error}</p>}
+          <div className={style.questionBox} onClick={() => !guessed && speak(`Wskaż kolor ${colorTranslations[currentColor]}`)}>
+            {guessed ? colorTranslations[currentColor] : '?'}
+          </div>
+          {guessed ? (
+            <button className={style.newGameButton} onClick={handleNewGame}>
+              Nowa Gra
+            </button>
+          ) : (
+            <div className={style.optionsContainer}>
+              {options.map((option, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleOptionClick(option)}
+                  className={style.colorButton}
+                  style={{ backgroundColor: colors[option] }}
+                  disabled={disabledColors.includes(option)}
+                >
+                  {colorTranslations[option]}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className={style.coloursContainer}>
+            {allColors.map(color => (
+              <div key={color} className={style.colourBox}>
+                <div className={style.letterSquare} style={{ backgroundColor: colors[color] }} />
+                <div className={style.starsSquare}>
+                  {colorsStats[color] > 0 && (
+                    <>
+                      <div className={style.starContainer}>
+                        <span className={style.star}>★</span>
+                      </div>
+                      <div className={style.pointsContainer}>
+                        <span className={style.points}>{colorsStats[color]}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
-          {message && <p className="message">{message}</p>}
-          <div className="stars-display">
-            <p>Twoje gwiazdki: {starsCount} ★</p>
+          <div className={style.starsDisplay}>
+            <div className={style.starsText}>
+              {playerName} ma {starsCount} <span className={style.star}>★</span>
+            </div>
           </div>
         </>
       )}
@@ -95,4 +209,4 @@ const ColoursGame = () => {
   );
 };
 
-export default ColoursGame;
+export default ColorGame;

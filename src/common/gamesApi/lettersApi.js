@@ -1,5 +1,6 @@
 import config from '../config';
 import axios from 'axios';
+import { handleHttpError } from '../api'; // Import funkcji handleHttpError
 
 // Funkcja do pobrania następnej litery
 export const getNextLetter = async (token) => {
@@ -11,22 +12,18 @@ export const getNextLetter = async (token) => {
     const response = await fetch(`${config.backendUrl}/games/letters/next`, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${token}`, // Przekazanie tokena w nagłówku
+        Authorization: `Bearer ${token}`,
       },
     });
 
-    if (!response.ok) {
-      throw new Error('Nie udało się pobrać danych z serwera.');
-    }
-
-    const data = await response.json();
-    return data;
+    return await handleHttpError(response);
   } catch (error) {
     console.error('Error fetching next letter:', error);
     throw error;
   }
 };
 
+// Funkcja do sprawdzania litery
 export const checkLetter = async (letter, token) => {
   try {
     const response = await axios.post(
@@ -38,9 +35,18 @@ export const checkLetter = async (letter, token) => {
         },
       }
     );
+
     return response.data;
   } catch (error) {
     console.error('Error checking letter:', error);
-    throw error;
+
+    if (error.response) {
+      throw {
+        status: error.response.status,
+        message: error.response.data.message || 'Błąd serwera',
+      };
+    }
+
+    throw { status: 500, message: 'Nieznany błąd podczas sprawdzania litery.' };
   }
 };
